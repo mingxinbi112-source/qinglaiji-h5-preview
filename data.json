@@ -1,0 +1,642 @@
+{
+  "site": {
+    "title": "青来集导览",
+    "subtitle": "触碰一下，开启余村未来",
+    "location": "浙江安吉 · 余村",
+    "theme": {
+      "bg": "#f3f6f1",
+      "text": "#12323b",
+      "primary": "#236d91",
+      "accent": "#dbef74",
+      "cardBg": "#ffffff",
+      "muted": "#49626a"
+    }
+  },
+  "home": {
+    "intro": "青来集（AnW · another way）是大余村青年人才社区的核心载体，聚集 OPC、全球合伙人、数字游民与青年创造者，探索「青年入乡」的乡村未来。"
+  },
+  "modules": [
+    {
+      "id": "opc",
+      "title": "OPC入驻",
+      "icon": "opc",
+      "summary": "全国首个乡村OPC社区，一个人的公司，更是一群人的未来。",
+      "flow": [
+        {
+          "step": 1,
+          "title": "填写入驻申请",
+          "desc": "提交个人/团队基础信息与项目方向"
+        },
+        {
+          "step": 2,
+          "title": "实地看场交流",
+          "desc": "到访余村，感受在地空间与社区氛围"
+        },
+        {
+          "step": 3,
+          "title": "商业BP提交",
+          "desc": "线下路演，阐述项目与乡村结合点"
+        },
+        {
+          "step": 4,
+          "title": "签署入驻协议",
+          "desc": "在地注册公司，正式成为OPC创客"
+        },
+        {
+          "step": 5,
+          "title": "开启乡村创业之旅",
+          "desc": "对接订单、资源与全国朋友圈"
+        }
+      ],
+      "policy": [
+        {
+          "title": "全配套空间",
+          "desc": "办公创作、生活配套、全方位生活保障"
+        },
+        {
+          "title": "全周期陪伴",
+          "desc": "IDEA验证、长期陪伴加速、产品改进、圈层提效"
+        },
+        {
+          "title": "全场景资源",
+          "desc": "融资对接、本地/平台/品牌订单、官方传播势能"
+        },
+        {
+          "title": "全国朋友圈",
+          "desc": "OPC开放营、AI+文化交流营、AI-Department"
+        }
+      ],
+      "cases": [
+        "溪鹭科技",
+        "佳创AI",
+        "智汇矩阵",
+        "碰碰科技",
+        "数衍AI",
+        "南歌AI",
+        "预言家科技",
+        "锐影工坊"
+      ],
+      "contact": {
+        "name": "小余",
+        "phone": "13456944608",
+        "wechat": "同号",
+        "qrcode": "OPC项目/20260917OPC三折页发包.pdf"
+      },
+      "images": [
+        "assets/opc.jpg"
+      ]
+    },
+    {
+      "id": "party",
+      "title": "党建 · 青年入乡",
+      "icon": "party",
+      "badge": "党建引领",
+      "summary": "党建引领 · 青年入乡：余村研学考察与课程分享产品，含经典路线、合伙人生态、实践站点。",
+      "products": [
+        {
+          "name": "余村经典路线考察",
+          "tag": "路线 · 两山",
+          "duration": "约 1 小时",
+          "route": [
+            "乡音小馆",
+            "余村邮局",
+            "余村印象",
+            "“美在余村”国漫茶咖",
+            "兜内咖啡 / 青年在村灵感便利店",
+            "两山石碑"
+          ],
+          "price": "1000元/团（30人以内），超出每人增收40元；单团限50人以内，超过50人按两个团算，配两名在地讲解员",
+          "cover": "assets/party_route_classic_cover.jpg",
+          "slices": [
+            "assets/slices/party_route_classic_00.jpg",
+            "assets/slices/party_route_classic_01.jpg",
+            "assets/slices/party_route_classic_02.jpg",
+            "assets/slices/party_route_classic_03.jpg",
+            "assets/slices/party_route_classic_04.jpg",
+            "assets/slices/party_route_classic_05.jpg",
+            "assets/slices/party_route_classic_06.jpg",
+            "assets/slices/party_route_classic_07.jpg"
+          ],
+          "sliceW": 750,
+          "sliceH": 9429
+        },
+        {
+          "name": "青年入乡余村实践课程分享",
+          "tag": "课程 · 分享",
+          "duration": "约 1 小时 · 青来集人才社区会议室",
+          "desc": "围绕“余村全球合伙人计划”“青年渐进式入乡”等余村实践经验展开，为参与者打开乡村发展新视角、新思路。",
+          "price": "学院认证讲师 2000元/场；安吉绿乡运营公司总经理 5000元/场；均含1小时专业课程分享交流",
+          "cover": "assets/party_course_cover.jpg",
+          "slices": [
+            "assets/slices/party_course_00.jpg",
+            "assets/slices/party_course_01.jpg",
+            "assets/slices/party_course_02.jpg",
+            "assets/slices/party_course_03.jpg",
+            "assets/slices/party_course_04.jpg",
+            "assets/slices/party_course_05.jpg"
+          ],
+          "sliceW": 750,
+          "sliceH": 7020
+        },
+        {
+          "name": "特色合伙人生态考察",
+          "tag": "生态 · 瀑布咖啡",
+          "duration": "约 1 小时 · 余村瀑布咖啡",
+          "desc": "全国首座工业风悬崖咖啡综合体，全省首个地质生态产品交易案例。以矿坑生态修复为核心，整合咖啡、水上划桨、音乐吧等多元业态，开业54天创收2000万。",
+          "price": "109元/人，含余村瀑布咖啡门票",
+          "cover": "assets/party_eco_cover.jpg",
+          "slices": [
+            "assets/slices/party_eco_00.jpg",
+            "assets/slices/party_eco_01.jpg",
+            "assets/slices/party_eco_02.jpg",
+            "assets/slices/party_eco_03.jpg",
+            "assets/slices/party_eco_04.jpg"
+          ],
+          "sliceW": 750,
+          "sliceH": 5934
+        },
+        {
+          "name": "余村全球合伙人路线考察",
+          "tag": "路线 · 合伙人",
+          "duration": "约 1 小时",
+          "route": [
+            "乡音小馆",
+            "余村邮局",
+            "余村印象",
+            "“美在余村”国漫茶咖",
+            "兜内咖啡 / 青年在村灵感便利店",
+            "两山石碑"
+          ],
+          "price": "1000元/团（30人以内），超出每人增收40元；单团限50人以内，超过50人按两个团算，配两名在地讲解员",
+          "cover": "assets/party_route_partner_cover.jpg",
+          "slices": [
+            "assets/slices/party_route_partner_00.jpg",
+            "assets/slices/party_route_partner_01.jpg",
+            "assets/slices/party_route_partner_02.jpg",
+            "assets/slices/party_route_partner_03.jpg",
+            "assets/slices/party_route_partner_04.jpg",
+            "assets/slices/party_route_partner_05.jpg",
+            "assets/slices/party_route_partner_06.jpg"
+          ],
+          "sliceW": 750,
+          "sliceH": 8095
+        },
+        {
+          "name": "青年入乡实践站点考察",
+          "tag": "站点 · 青来集",
+          "duration": "约 40 分钟 · 青来集人才社区",
+          "desc": "浙江省首个青年入乡实践站点，获总理两次批示。全国首个乡村青年人才社区，一处介于城市和乡村间的创业生活理想之地。",
+          "price": "20元/人，最低按10人收费；含青来集团区参观讲解服务",
+          "cover": "assets/party_site_cover.jpg",
+          "slices": [
+            "assets/slices/party_site_00.jpg",
+            "assets/slices/party_site_01.jpg",
+            "assets/slices/party_site_02.jpg",
+            "assets/slices/party_site_03.jpg",
+            "assets/slices/party_site_04.jpg",
+            "assets/slices/party_site_05.jpg",
+            "assets/slices/party_site_06.jpg"
+          ],
+          "sliceW": 750,
+          "sliceH": 7802
+        }
+      ],
+      "contact": {
+        "name": "朝南阳台",
+        "location": "浙江 杭州",
+        "qrcode": "assets/party_qr.jpg",
+        "note": "扫二维码添加负责人微信，咨询党建/研学产品定制"
+      },
+      "images": [
+        "assets/party_route_classic_cover.jpg"
+      ]
+    },
+    {
+      "id": "partner",
+      "title": "合伙人合作",
+      "icon": "partner",
+      "summary": "「余」你一起未来，加入余村全球合伙人计划。",
+      "flow": [
+        {
+          "step": 1,
+          "title": "报名申请",
+          "desc": "扫码下载报名表并提交"
+        },
+        {
+          "step": 2,
+          "title": "报名审查",
+          "desc": "资料审核与初步沟通"
+        },
+        {
+          "step": 3,
+          "title": "集中现场踏勘",
+          "desc": "实地考察余村资源与场景"
+        },
+        {
+          "step": 4,
+          "title": "商业计划书提交审核",
+          "desc": "提交项目计划书"
+        },
+        {
+          "step": 5,
+          "title": "集中路演",
+          "desc": "面向评审团展示项目"
+        },
+        {
+          "step": 6,
+          "title": "商务谈判",
+          "desc": "合作模式与资源对接洽谈"
+        },
+        {
+          "step": 7,
+          "title": "项目立项",
+          "desc": "在青年理想集结地开启在村美好生活"
+        }
+      ],
+      "policy": [
+        {
+          "title": "招募方向",
+          "desc": "研学教育、农林产业、乡村旅游、文化创意、数字经济、绿色金融、零碳科技、健康医疗"
+        },
+        {
+          "title": "招募渠道",
+          "desc": "官方报名、渠道推荐、以伙引伙、精准招募、青年共创转化、数字游民转化、云村民转化"
+        },
+        {
+          "title": "支持内容",
+          "desc": "空间管理、资源嫁接、生活保障、共创梦想、共享生活"
+        }
+      ],
+      "contact": {
+        "name": "小余同学",
+        "phone": "13456944608",
+        "wechat": "同号",
+        "email": "yucun2022@163.com",
+        "qrcode": "assets/partner.jpg",
+        "note": "邮件命名：余村合伙人项目申报+公司名称；收到报名信息后五个工作日内回复"
+      },
+      "images": [
+        "assets/partner.jpg"
+      ]
+    },
+    {
+      "id": "aifriends",
+      "title": "AI朋友局",
+      "icon": "ai",
+      "summary": "与青年创作者一起玩转 AI，查看往期活动和社群入口。",
+      "events": [
+        {
+          "title": "玩转AI短片：提示词怎么写不翻车",
+          "date": "2026-09-22",
+          "time": "12:30-13:20",
+          "weekday": "周二",
+          "location": "安吉余村 · 青来集一楼路演厅",
+          "tag": "AI短片 · 提示词"
+        }
+      ],
+      "group": {
+        "name": "青来·余村好伙伴",
+        "qrcode": "assets/aifriends_qr.jpg",
+        "note": "群二维码7天内有效（10月1日前），需定期更新"
+      },
+      "images": [
+        "assets/aifriends.jpg"
+      ]
+    },
+    {
+      "id": "community",
+      "title": "社区服务",
+      "icon": "community",
+      "summary": "青聚落社群活动，手作、研学与生活美学。",
+      "events": [
+        {
+          "title": "中秋治愈系——宋锦葫芦灯DIY",
+          "date": "2026-09-09",
+          "time": "14:00-15:30",
+          "weekday": "周三",
+          "location": "青来集 · AnW Coffee",
+          "tag": "手作 · 非遗"
+        }
+      ],
+      "contact": {
+        "name": "小青（青聚落社群）",
+        "qrcode": "assets/community_qr.jpg",
+        "note": "添加负责人微信，加入社群获取最新活动"
+      },
+      "images": [
+        "assets/community.jpg"
+      ]
+    },
+    {
+      "id": "apartment",
+      "title": "人才公寓",
+      "icon": "apartment",
+      "summary": "绿城服务 · 马吉青来集宿，青年人才公寓。",
+      "address": "安吉余村 · 马吉青来集宿",
+      "wifi": "青来集宿2L / 密码：thp12345",
+      "rules": [
+        "入住人员凭本人有效身份证办理入住登记手续",
+        "妥善保管房卡，遗失需支付50元补卡费",
+        "保持租住范围环境卫生，垃圾及时投放至公共垃圾桶",
+        "注意防火，勿私拉电线，禁止使用超大功率电器及明火做饭",
+        "不得私自留宿非公寓登记人员，一经发现将请其退出",
+        "爱护公共设备，不得随意改变公寓内布线和设置"
+      ],
+      "serviceHours": "8:30-17:30",
+      "contacts": [
+        {
+          "label": "管家服务",
+          "phone": "17706820273",
+          "hours": "8:30-17:30"
+        },
+        {
+          "label": "夜间值班热线",
+          "phone": "0572-5325929"
+        }
+      ],
+      "notice": "公寓介绍.txt 为空文件，暂无电子版公寓介绍；入住须知已数字化。",
+      "images": [
+        "assets/apartment1.jpg",
+        "assets/apartment2.jpg",
+        "assets/apartment3.jpg"
+      ]
+    },
+    {
+      "id": "recent",
+      "title": "村中活动回顾",
+      "icon": "event",
+      "summary": "回看余村的手作、健康、公益与田园体验。",
+      "events": [
+        {
+          "title": "公益口腔检查：牙好才是硬道理",
+          "date": "2026-09-23",
+          "time": "09:30-11:00",
+          "weekday": "周三",
+          "location": "余村村委",
+          "phone": "198-5711-2527",
+          "tag": "公益 · 健康"
+        },
+        {
+          "title": "手编一把竹扇",
+          "date": "2026-09-19",
+          "time": "10:00-11:30",
+          "weekday": "周六",
+          "location": "余村印象-玻璃盒子",
+          "phone": "188-6821-4999",
+          "tag": "手作 · 非遗"
+        },
+        {
+          "title": "云村民集合！喊你回村儿收南瓜啦",
+          "date": "2026-09-12",
+          "time": "09:30-11:30",
+          "weekday": "周六",
+          "location": "余村云村民田地",
+          "phone": "188-6821-5057",
+          "tag": "农事 · 采摘"
+        },
+        {
+          "title": "自然课堂：捡几颗果壳，摇出秋天的声音",
+          "date": "2026-09-13",
+          "time": "10:00-11:30",
+          "weekday": "周日",
+          "location": "余村",
+          "phone": "188-6821-5057",
+          "tag": "自然 · 手作"
+        },
+        {
+          "title": "来免费理发啦",
+          "date": "2026-09-10",
+          "time": "09:30-11:30",
+          "weekday": "周四",
+          "location": "余村清风廊",
+          "phone": "198-5711-2527",
+          "tag": "公益 · 便民"
+        }
+      ],
+      "images": [
+        "assets/event1.jpg",
+        "assets/event2.jpg",
+        "assets/event3.jpg",
+        "assets/event4.jpg",
+        "assets/event5.jpg"
+      ]
+    },
+    {
+      "id": "guide",
+      "title": "余村导览",
+      "icon": "guide",
+      "summary": "漫游余村地图 + 本地饭店推荐。",
+      "map": "assets/yucun_map.jpg",
+      "restaurants": [
+        {
+          "name": "春林山庄",
+          "address": "余村大坦自然村36号",
+          "phone": "13967270787"
+        },
+        {
+          "name": "胡氏山庄",
+          "address": "余村荷花山漂流入口旁",
+          "phone": "13738223215"
+        },
+        {
+          "name": "庭仙农家",
+          "address": "余村桥头自然村9号",
+          "phone": "13587274172"
+        },
+        {
+          "name": "潘先生的菜",
+          "address": "余村大坦自然村42号",
+          "phone": "15968272369"
+        },
+        {
+          "name": "习风堂文化主题餐厅",
+          "address": "余村大坦自然村38号",
+          "phone": "13735564688"
+        },
+        {
+          "name": "银杏餐馆",
+          "address": "余村周家自然村银杏餐厅",
+          "phone": "13511275834"
+        },
+        {
+          "name": "周妈妈土菜馆",
+          "address": "余村周家自然村9号",
+          "phone": "18267226967"
+        },
+        {
+          "name": "余香餐馆",
+          "address": "余村周家自然村70号",
+          "phone": "13686823871"
+        },
+        {
+          "name": "老潘头土菜馆",
+          "address": "余村周家自然村32号",
+          "phone": "13819290144"
+        },
+        {
+          "name": "田野里餐厅",
+          "address": "余村周家自然村40号",
+          "phone": "18257227331"
+        },
+        {
+          "name": "安吉人家·山野农家菜",
+          "address": "余村叶家堂自然村10号",
+          "phone": "18413259397"
+        },
+        {
+          "name": "紫藤花园馆",
+          "address": "余村周家自然村3号",
+          "phone": "15057260626"
+        },
+        {
+          "name": "铁蛋窝农家乐",
+          "address": "余村大坦自然村68号",
+          "phone": "15868217649"
+        },
+        {
+          "name": "吴均汤包",
+          "address": "余村叶家堂5号",
+          "phone": "18606835674"
+        },
+        {
+          "name": "面娘子干挑面",
+          "address": "余村叶家堂15号",
+          "phone": "13754200872"
+        },
+        {
+          "name": "梧漁",
+          "address": "余村「两山」大石壁对面",
+          "phone": "18765720633"
+        },
+        {
+          "name": "叶家烧饼",
+          "address": "余村叶家堂56号",
+          "phone": "13757224049"
+        }
+      ],
+      "images": [
+        "assets/yucun_map.jpg"
+      ],
+      "restaurantSlices": [
+        "assets/slices/restaurants_00.jpg",
+        "assets/slices/restaurants_01.jpg",
+        "assets/slices/restaurants_02.jpg",
+        "assets/slices/restaurants_03.jpg"
+      ],
+      "restaurantSliceW": 750,
+      "restaurantSliceH": 4078
+    }
+  ],
+  "meta": {
+    "dataSource": "/Users/mac/Desktop/手环.zip",
+    "extractedAt": "2026-09-24",
+    "warnings": [
+      "微信群二维码有7天有效期，H5中需标注并预留更新机制",
+      "公寓介绍.txt 为空文件，缺失公寓文字介绍",
+      "OPC政策与合伙人政策来自宣传折页/手册的概括，具体条款需运营方确认",
+      "饭店推荐图片来自单张长图，已人工录入名称/地址/电话",
+      "党建/研学产品价格、行程来自宣传折页，大会期间是否适用需运营方确认"
+    ]
+  },
+  "conference": {
+    "demo": true,
+    "name": "2026 青来集青年共创大会",
+    "tagline": "与青年同行，在余村看见乡村的另一种可能。",
+    "date": "2026-10-24",
+    "dateLabel": "10月24日 · 周六",
+    "timeLabel": "09:00 — 17:00",
+    "place": "浙江安吉 · 余村青来集",
+    "address": "浙江省湖州市安吉县天荒坪镇余村青来集",
+    "mapKeyword": "浙江安吉余村青来集",
+    "heroImage": "assets/conference-hero.webp",
+    "intro": "在这里，遇见做事的人、可落地的项目和乡村里的新日常。用一天走进青来集，认识余村的青年实践。",
+    "agenda": [
+      {
+        "time": "09:00",
+        "end": "09:30",
+        "title": "入场签到 · 认识青来集",
+        "location": "青来集入口",
+        "description": "领取导览信息，先看看今天有哪些值得参与的内容。",
+        "period": "morning"
+      },
+      {
+        "time": "09:30",
+        "end": "10:00",
+        "title": "大会开场 · 余村的青年新故事",
+        "location": "一楼路演厅",
+        "description": "从余村出发，了解青来集的愿景与今日安排。",
+        "period": "morning"
+      },
+      {
+        "time": "10:00",
+        "end": "11:10",
+        "title": "主题分享 · 乡村与创造力",
+        "location": "一楼路演厅",
+        "description": "围绕青年入乡、数字创作与在地协作展开交流。",
+        "period": "morning"
+      },
+      {
+        "time": "11:10",
+        "end": "12:00",
+        "title": "项目速览 · 从想法到在村实践",
+        "location": "一楼路演厅",
+        "description": "了解 OPC、全球合伙人及社区项目的真实路径。",
+        "period": "morning"
+      },
+      {
+        "time": "12:00",
+        "end": "13:30",
+        "title": "午间自由交流",
+        "location": "余村周边",
+        "description": "按自己的节奏休息、用餐，顺路认识新朋友。",
+        "period": "afternoon"
+      },
+      {
+        "time": "13:30",
+        "end": "14:50",
+        "title": "在地走读 · 走进青来集",
+        "location": "青来集集合",
+        "description": "跟随导览走进空间，认识在村生活与项目场景。",
+        "period": "afternoon"
+      },
+      {
+        "time": "15:00",
+        "end": "16:20",
+        "title": "青年共创圆桌",
+        "location": "一楼路演厅",
+        "description": "带着问题和想法，与来自不同领域的伙伴对话。",
+        "period": "afternoon"
+      },
+      {
+        "time": "16:20",
+        "end": "17:00",
+        "title": "自由交流 · 合影留念",
+        "location": "青来集公共空间",
+        "description": "继续交流合作想法，为这一天留下新的连接。",
+        "period": "afternoon"
+      }
+    ],
+    "venues": [
+      {
+        "name": "签到入口",
+        "meta": "先从这里开始",
+        "detail": "查看大会安排，确定今天想参加的环节。",
+        "icon": "01"
+      },
+      {
+        "name": "一楼路演厅",
+        "meta": "主题分享 · 圆桌交流",
+        "detail": "示意主会场；具体入口以现场指引为准。",
+        "icon": "02"
+      },
+      {
+        "name": "AnW Coffee",
+        "meta": "休息 · 自由交流",
+        "detail": "在活动间隙坐一坐，和新朋友继续聊。",
+        "icon": "03"
+      }
+    ],
+    "headlineTop": "把未来，",
+    "headlineBottom": "带回村里。"
+  }
+}
