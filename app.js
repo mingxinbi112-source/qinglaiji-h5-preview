@@ -258,8 +258,45 @@
     });
   }
   function setupNavigation() {
+    var mobile = window.matchMedia('(max-width:620px), (orientation:landscape) and (max-height:500px) and (max-width:900px)');
+    var views = ['home', 'agenda', 'venue', 'explore'];
+    function setMobileView(view, resetScroll) {
+      if (!mobile.matches) return;
+      if (views.indexOf(view) < 0) view = 'home';
+      document.body.dataset.mobileView = view;
+      document.querySelectorAll('[data-nav]').forEach(function (link) {
+        var active = link.dataset.nav === (view === 'home' ? 'top' : view);
+        link.classList.toggle('is-active', active);
+        if (active) link.setAttribute('aria-current', 'page');
+        else link.removeAttribute('aria-current');
+      });
+      if (resetScroll) requestAnimationFrame(function () { window.scrollTo(0, 0); });
+    }
+    function viewFromHash() {
+      var hash = location.hash.slice(1);
+      return views.indexOf(hash) >= 0 ? hash : 'home';
+    }
+    function syncView() { setMobileView(viewFromHash(), true); }
+    document.addEventListener('click', function (event) {
+      if (!mobile.matches) return;
+      var link = event.target.closest('a[href^="#"]');
+      if (!link) return;
+      var hash = link.getAttribute('href').slice(1);
+      if (['top', 'home', 'agenda', 'venue', 'explore'].indexOf(hash) < 0) return;
+      event.preventDefault();
+      var view = hash === 'top' ? 'home' : hash;
+      history.pushState({view:view}, '', view === 'home' ? '#top' : '#' + view);
+      setMobileView(view, true);
+    });
+    window.addEventListener('popstate', syncView);
+    window.addEventListener('hashchange', syncView);
+    if (mobile.addEventListener) mobile.addEventListener('change', syncView);
+    else mobile.addListener(syncView);
+    syncView();
+
     var ids = ['top','agenda','venue','explore'];
     var observer = new IntersectionObserver(function (entries) {
+      if (mobile.matches) return;
       entries.forEach(function (entry) {
         if (!entry.isIntersecting) return;
         document.querySelectorAll('[data-nav]').forEach(function (link) {
@@ -301,7 +338,7 @@
     galleryContent.innerHTML = '';
   });
 
-  Promise.resolve(window.__QL_DATA__ || fetch('data.json?v=20260927-mobile3').then(function (response) {
+  Promise.resolve(window.__QL_DATA__ || fetch('data.json?v=20260927-pages4').then(function (response) {
     if (!response.ok) throw new Error('data.json ' + response.status);
     return response.json();
   })).then(function (data) {
@@ -312,10 +349,10 @@
     renderConference();
     renderAgenda();
     renderModules();
-    setupNavigation();
   }).catch(function (error) {
     console.error('青来集数据加载失败', error);
     el('agendaList').innerHTML = '<p>内容加载失败，请检查网络后刷新页面。</p><button class="button button-dark" type="button" onclick="location.reload()">重新加载</button>';
     toast('内容加载失败');
   });
+  setupNavigation();
 })();

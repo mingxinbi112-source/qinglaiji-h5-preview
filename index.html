@@ -6,9 +6,9 @@
   <meta name="theme-color" content="#eff5ef">
   <meta name="description" content="青来集青年共创大会：看日程、找会场、认识余村青年项目。">
   <title>青来集青年共创大会 · 大会导览</title>
-  <link rel="stylesheet" href="style.css?v=20260927-mobile3">
+  <link rel="stylesheet" href="style.css?v=20260927-pages4">
 </head>
-<body>
+<body data-mobile-view="home">
   <a class="skip-link" href="#content">跳到主要内容</a>
   <header class="site-header" id="top">
     <a class="brand" href="#top" aria-label="青来集，返回顶部"><span class="brand-mark">青</span><span>青来集<small>another way in Yucun</small></span></a>
@@ -51,6 +51,7 @@
     </section>
 
     <section class="agenda-section section-pad" id="agenda" aria-labelledby="agendaTitle">
+      <div class="mobile-page-header"><a href="#top" aria-label="返回首页">← 首页</a><strong>大会日程</strong><span>02 / 04</span></div>
       <div class="page-width">
         <div class="section-top"><div><p class="eyebrow">THE DAY <span>002</span></p><h2 id="agendaTitle">大会日程<span class="accent-dot">.</span></h2></div><p class="section-aside">从入场到交流，<br>按自己的节奏参与。</p></div>
         <div class="agenda-toolbar"><p id="agendaDate"></p><div class="segmented" role="group" aria-label="筛选日程"><button type="button" class="is-active" data-period="all" aria-pressed="true">全天</button><button type="button" data-period="morning" aria-pressed="false">上午</button><button type="button" data-period="afternoon" aria-pressed="false">下午</button></div></div>
@@ -60,6 +61,7 @@
     </section>
 
     <section class="venue-section section-pad" id="venue" aria-labelledby="venueTitle">
+      <div class="mobile-page-header"><a href="#top" aria-label="返回首页">← 首页</a><strong>现场导览</strong><span>03 / 04</span></div>
       <div class="page-width">
         <div class="section-top"><div><p class="eyebrow">FIND YOUR WAY <span>003</span></p><h2 id="venueTitle">来到现场<span class="accent-dot">.</span></h2></div><p class="section-aside">先找到青来集，<br>再跟着当天的动线走。</p></div>
         <div class="venue-layout">
@@ -71,6 +73,7 @@
     </section>
 
     <section class="explore-section section-pad" id="explore" aria-labelledby="exploreTitle">
+      <div class="mobile-page-header"><a href="#top" aria-label="返回首页">← 首页</a><strong>认识青来集</strong><span>04 / 04</span></div>
       <div class="page-width"><div class="section-top"><div><p class="eyebrow">BEYOND THE EVENT <span>004</span></p><h2 id="exploreTitle">认识青来集<span class="accent-dot">.</span></h2></div><p class="section-aside">从一场大会出发，<br>看见长期发生的事。</p></div>
         <div class="filter-list" role="group" aria-label="筛选青来集方向"><button type="button" class="is-active" data-filter="all" aria-pressed="true">全部方向</button><button type="button" data-filter="create" aria-pressed="false">创业与合作</button><button type="button" data-filter="connect" aria-pressed="false">社群与活动</button><button type="button" data-filter="live" aria-pressed="false">在村生活</button></div>
         <div class="module-grid" id="moduleGrid"></div>
@@ -84,9 +87,9 @@
 
   <nav class="bottom-nav" aria-label="页面导航"><a href="#top" class="is-active" data-nav="top"><span>⌂</span>首页</a><a href="#agenda" data-nav="agenda"><span>◷</span>日程</a><a href="#venue" data-nav="venue"><span>⌖</span>导览</a><a href="#explore" data-nav="explore"><span>✳</span>探索</a></nav>
 
-  <dialog id="moduleDialog" class="module-dialog" aria-labelledby="dialogTitle"><div class="dialog-shell"><header class="dialog-header"><div><span class="panel-kicker">EXPLORE QINGLAIJI</span><h2 id="dialogTitle"></h2></div><button type="button" class="icon-button" id="closeModule" aria-label="关闭详情">×</button></header><div class="dialog-content" id="dialogContent"></div></div></dialog>
+  <dialog id="moduleDialog" class="module-dialog" aria-labelledby="dialogTitle"><div class="dialog-shell"><header class="dialog-header"><div><span class="panel-kicker">EXPLORE QINGLAIJI</span><h2 id="dialogTitle"></h2></div><button type="button" class="icon-button" id="closeModule" aria-label="返回青来集项目">←</button></header><div class="dialog-content" id="dialogContent"></div></div></dialog>
   <dialog id="galleryDialog" class="gallery-dialog" aria-label="图片查看"><header class="gallery-header"><strong id="galleryTitle"></strong><button type="button" class="icon-button" id="closeGallery" aria-label="关闭图片">×</button></header><div class="gallery-scroll" id="galleryContent"></div></dialog>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
-  <script src="app.js?v=20260927-mobile3"></script>
+  <script src="app.js?v=20260927-pages4"></script>
 </body>
 </html>
