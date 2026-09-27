@@ -301,7 +301,7 @@
     galleryContent.innerHTML = '';
   });
 
-  Promise.resolve(window.__QL_DATA__ || fetch('data.json').then(function (response) {
+  Promise.resolve(window.__QL_DATA__ || fetch('data.json?v=20260927-mobile2').then(function (response) {
     if (!response.ok) throw new Error('data.json ' + response.status);
     return response.json();
   })).then(function (data) {
