@@ -98,8 +98,8 @@
   }
   function renderAgenda() {
     var list = EVENT.agenda.filter(function (item) { return currentPeriod === 'all' || item.period === currentPeriod; });
-    el('agendaList').innerHTML = list.map(function (item) {
-      return '<details class="agenda-item"><summary><span class="agenda-time">' + esc(item.time) + '</span><span class="agenda-main"><strong>' + esc(item.title) + '</strong><small>' + esc(item.time) + ' — ' + esc(item.end) + ' · ' + esc(item.location) + '</small></span><span class="agenda-plus" aria-hidden="true">+</span></summary><div class="agenda-detail">' + esc(item.description) + '</div></details>';
+    el('agendaList').innerHTML = list.map(function (item, index) {
+      return '<details class="agenda-item" style="--entry-index:' + index + '"><summary><span class="agenda-time">' + esc(item.time) + '</span><span class="agenda-main"><strong>' + esc(item.title) + '</strong><small>' + esc(item.time) + ' — ' + esc(item.end) + ' · ' + esc(item.location) + '</small></span><span class="agenda-plus" aria-hidden="true">+</span></summary><div class="agenda-detail">' + esc(item.description) + '</div></details>';
     }).join('');
   }
   function renderModules() {
@@ -108,7 +108,7 @@
     });
     el('moduleGrid').innerHTML = selected.map(function (item, index) {
       var group = groups[item.id] || ['connect', '青来集', 'assets/community.jpg'];
-      return '<button class="module-card" type="button" data-open-module="' + esc(item.id) + '" aria-label="查看' + esc(item.title) + '详情">' +
+      return '<button class="module-card" type="button" style="--entry-index:' + index + '" data-group="' + esc(group[0]) + '" data-open-module="' + esc(item.id) + '" aria-label="查看' + esc(item.title) + '详情">' +
         '<span class="module-image">' + imageMarkup(group[2], item.title, '', 'eager') + '<span class="module-number">' + String(index + 1).padStart(2, '0') + '</span></span>' +
         '<span class="module-info"><span class="module-category">' + esc(group[1]) + '</span><strong>' + esc(item.title) + '</strong><small>' + esc(item.summary) + '</small><span class="module-open" aria-hidden="true">↗</span></span></button>';
     }).join('');
@@ -182,6 +182,7 @@
     var item = MODULES.find(function (m) { return m.id === id; });
     if (!item) return;
     media.clear();
+    moduleDialog.dataset.group = (groups[id] || ['connect'])[0];
     setText('dialogTitle', item.title);
     dialogContent.innerHTML = renderModule(item);
     dialogContent.scrollTop = 0;
@@ -260,10 +261,17 @@
   function setupNavigation() {
     var mobile = window.matchMedia('(max-width:620px), (orientation:landscape) and (max-height:500px) and (max-width:900px)');
     var views = ['home', 'agenda', 'venue', 'explore'];
+    var transition = el('pageTransition');
+    var transitionTimer;
+    var revealTimer;
+    var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
     function setMobileView(view, resetScroll) {
       if (!mobile.matches) return;
       if (views.indexOf(view) < 0) view = 'home';
       document.body.dataset.mobileView = view;
+      document.body.classList.remove('view-animate');
+      void document.body.offsetWidth;
+      document.body.classList.add('view-animate');
       document.querySelectorAll('[data-nav]').forEach(function (link) {
         var active = link.dataset.nav === (view === 'home' ? 'top' : view);
         link.classList.toggle('is-active', active);
@@ -276,7 +284,12 @@
       var hash = location.hash.slice(1);
       return views.indexOf(hash) >= 0 ? hash : 'home';
     }
-    function syncView() { setMobileView(viewFromHash(), true); }
+    function syncView() {
+      clearTimeout(transitionTimer);
+      clearTimeout(revealTimer);
+      transition.className = 'page-transition';
+      setMobileView(viewFromHash(), true);
+    }
     document.addEventListener('click', function (event) {
       if (!mobile.matches) return;
       var link = event.target.closest('a[href^="#"]');
@@ -285,8 +298,28 @@
       if (['top', 'home', 'agenda', 'venue', 'explore'].indexOf(hash) < 0) return;
       event.preventDefault();
       var view = hash === 'top' ? 'home' : hash;
-      history.pushState({view:view}, '', view === 'home' ? '#top' : '#' + view);
-      setMobileView(view, true);
+      if (view === document.body.dataset.mobileView) {
+        window.scrollTo(0, 0);
+        return;
+      }
+      function commitView() {
+        history.pushState({view:view}, '', view === 'home' ? '#top' : '#' + view);
+        setMobileView(view, true);
+      }
+      if (reducedMotion.matches) { commitView(); return; }
+      clearTimeout(transitionTimer);
+      clearTimeout(revealTimer);
+      transition.style.setProperty('--touch-x', (event.clientX || innerWidth / 2) + 'px');
+      transition.style.setProperty('--touch-y', (event.clientY || innerHeight / 2) + 'px');
+      transition.style.setProperty('--transition-color', view === 'agenda' ? '#86cee3' : view === 'venue' ? '#a9cf9d' : view === 'explore' ? '#f0a469' : '#b9e1d5');
+      transition.className = 'page-transition';
+      void transition.offsetWidth;
+      transition.className = 'page-transition is-covering';
+      transitionTimer = setTimeout(function () {
+        commitView();
+        transition.className = 'page-transition is-revealing';
+        revealTimer = setTimeout(function () { transition.className = 'page-transition'; }, 260);
+      }, 190);
     });
     window.addEventListener('popstate', syncView);
     window.addEventListener('hashchange', syncView);
@@ -309,6 +342,18 @@
     }, {rootMargin:'-35% 0px -60% 0px'});
     ids.forEach(function (id) { observer.observe(el(id)); });
   }
+  document.addEventListener('pointerdown', function (event) {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    var target = event.target.closest('.quick-item,.hero-actions .button,.bottom-nav a,.mobile-page-header a,.segmented button,.filter-list button,.module-card,.venue-actions .button,.agenda-item summary,.icon-button');
+    if (!target) return;
+    var box = target.getBoundingClientRect();
+    var ripple = document.createElement('span');
+    ripple.className = 'tap-ripple';
+    ripple.style.left = event.clientX - box.left + 'px';
+    ripple.style.top = event.clientY - box.top + 'px';
+    target.appendChild(ripple);
+    setTimeout(function () { ripple.remove(); }, 540);
+  }, {passive:true});
   document.addEventListener('click', function (event) {
     var trigger = event.target.closest('[data-open-module]');
     if (trigger) { openModule(trigger.dataset.openModule); return; }
@@ -338,7 +383,7 @@
     galleryContent.innerHTML = '';
   });
 
-  Promise.resolve(window.__QL_DATA__ || fetch('data.json?v=20260927-pages4').then(function (response) {
+  Promise.resolve(window.__QL_DATA__ || fetch('data.json?v=20260927-visual5').then(function (response) {
     if (!response.ok) throw new Error('data.json ' + response.status);
     return response.json();
   })).then(function (data) {
