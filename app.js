@@ -94,10 +94,7 @@
     el('venuePoints').innerHTML = EVENT.venues.map(function (v) {
       return '<div class="venue-point"><b>' + esc(v.icon) + '</b><div><strong>' + esc(v.name) + '</strong><small>' + esc(v.meta) + ' · ' + esc(v.detail) + '</small></div></div>';
     }).join('');
-    var hero = document.querySelector('.hero-media');
-    if (EVENT.heroImage && EVENT.heroImage !== 'assets/conference-hero.webp') {
-      hero.style.backgroundImage = 'linear-gradient(90deg,rgba(225,239,245,.82),rgba(225,239,245,.08)),linear-gradient(0deg,rgba(9,36,46,.75),transparent 27%),url("' + EVENT.heroImage.replace(/["()]/g, '') + '")';
-    }
+    if (EVENT.heroImage) document.querySelector('.hero-photo').src = asset(EVENT.heroImage);
   }
   function renderAgenda() {
     var list = EVENT.agenda.filter(function (item) { return currentPeriod === 'all' || item.period === currentPeriod; });
