@@ -13,9 +13,40 @@
 @media(max-height:700px) and (max-width:620px){.home{gap:15px}.home-copy .home-location{margin-bottom:8px}.home h1{font-size:43px;margin-bottom:10px}.home-scene{min-height:170px;height:29vh;height:29svh}.home-actions .button{min-height:48px}.home-sprout{top:32px}}
 @media(orientation:landscape) and (max-height:500px) and (min-width:621px){.topbar{height:64px}.home{min-height:calc(100vh - 64px);min-height:calc(100svh - 64px);padding-top:0;padding-bottom:16px;grid-template-rows:auto auto}.home-location{margin-bottom:8px;font-size:14px}.home h1{font-size:43px;margin-bottom:12px}.home-description{font-size:15px}.home-scene{height:calc(100vh - 88px);height:calc(100svh - 88px);min-height:240px}.home-actions{padding:15px 0 0}.home-actions .button{font-size:14px;min-height:45px;padding:10px 16px}.home-sprout{display:none}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{animation:none!important;transition:none!important}.page-wipe,.tap-wave{display:none}}
-/* The supplied architectural photograph needs a wider frame to retain the entrance. */
-.home-scene{height:auto;min-height:0;max-height:none;aspect-ratio:1.5;flex:0 0 auto;margin-block:auto;border-radius:32px 80px 32px 32px}
-.home-photo,.home-fallback{object-position:50% 50%}
-.home-scene::after{background:none}
-.home-scene .photo-caption,.home-scene .scene-line{display:none}
-@media(min-width:621px){.home-scene{aspect-ratio:1.3}}
+/* Full-bleed campus scene. Keep the architecture bright; shade only the text zones. */
+body[data-view=home]{background:#173f3c;color:#fffdf3}
+body[data-view=home] .topbar{position:absolute;inset:0 0 auto;background:transparent;color:#fffdf3}
+body[data-view=home] .brand{font-weight:600;letter-spacing:.08em;text-shadow:0 1px 12px #122f3855}
+.home-return{display:inline-flex;align-items:center;gap:7px;min-height:44px;padding:8px 14px;border:1px solid #c5d2c2;border-radius:99px;font-size:14px;white-space:nowrap;background:#ffffff55}
+body[data-view=home] .home-return{display:none}
+.home{width:100%;min-height:100vh;min-height:100svh;display:flex;flex-direction:column;align-items:stretch;justify-content:space-between;padding:clamp(112px,17vh,180px) max(26px,calc((100vw - 1120px)/2)) max(38px,calc(24px + env(safe-area-inset-bottom)));gap:32px}
+.home-scene{position:absolute;inset:0;z-index:-1;width:100%;height:100%;min-height:0;max-height:none;margin:0;border-radius:0;box-shadow:none;background:#173f3c;transform:none;aspect-ratio:auto}
+.home-photo,.home-fallback{object-fit:cover;object-position:50% 54%;height:100%;width:100%;transform:scale(1.015);animation:landscape-breathe 22s ease-in-out infinite alternate}
+.home-scene::after{background:linear-gradient(180deg,rgba(10,30,36,.45) 0%,rgba(13,33,37,.2) 28%,transparent 49%,rgba(13,36,32,.08) 65%,rgba(9,29,26,.82) 100%)}
+.home-copy{max-width:600px;text-shadow:0 2px 24px rgba(8,28,33,.22)}
+.home-location{color:#fffdf3;opacity:.82;font-size:14px;letter-spacing:.12em;margin-bottom:17px}
+.home h1{font-size:clamp(52px,6vw,82px);font-weight:600;line-height:1.16;letter-spacing:-.04em;margin-bottom:21px}
+.home h1 em{color:#ecf1cb}
+.home-description{color:#fffdf3;opacity:.86;font-size:17px;font-weight:400;letter-spacing:.015em}
+.home-actions{padding:0;margin:0;align-self:stretch;display:flex;gap:16px;position:relative;z-index:2}
+.home-actions .button{font-weight:500;min-height:54px;box-shadow:none;padding:14px 25px}
+.home-actions .primary{background:rgba(248,249,230,.9);color:#203f35;border-color:transparent}
+.home-actions .secondary{color:#fffdf3;border-color:rgba(255,253,243,.48);background:rgba(18,44,35,.14);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.home-actions .primary:hover{background:#fffdf3}.home-actions .secondary:hover{background:#ffffff22}
+.is-entering .home-scene{animation:hero-reveal 1.1s ease-out both}
+@keyframes hero-reveal{from{opacity:.45}to{opacity:1}}
+@keyframes landscape-breathe{from{transform:scale(1.015)}to{transform:scale(1.05)}}
+@media(max-width:620px){
+ .home{padding:calc(102px + env(safe-area-inset-top)) 26px max(32px,calc(22px + env(safe-area-inset-bottom)));gap:24px}
+ .home h1{font-size:clamp(46px,12.5vw,57px);line-height:1.17;margin-bottom:17px;font-weight:600}
+ .home-location{font-size:13px;letter-spacing:.08em;margin-bottom:16px}
+ .home-description{font-size:15px;letter-spacing:0}
+ .home-scene{height:100%;min-height:0;max-height:none}
+ .home-photo,.home-fallback{object-position:52% 55%}
+ .home-actions{display:grid;grid-template-columns:1.15fr 1fr;gap:12px}
+ .home-actions .button{font-size:15px;padding:13px 12px;min-height:52px;gap:10px}
+ .home-return{font-size:14px;padding-inline:12px}
+}
+@media(max-width:360px){.home{padding-inline:20px}.home h1{font-size:43px}.home-description{font-size:14px}.home-actions .button{font-size:14px;padding-inline:9px}.home-actions{gap:10px}}
+@media(max-height:700px) and (max-width:620px){.home{padding-top:90px;padding-bottom:24px}.home h1{font-size:44px;margin-bottom:12px}.home-location{margin-bottom:10px}.home-actions .button{min-height:48px}}
+@media(orientation:landscape) and (max-height:500px){.home{min-height:100vh;min-height:100svh;padding-top:84px;padding-bottom:20px;gap:22px}.home h1{font-size:38px;margin-bottom:12px}.home-location{margin-bottom:8px}.home-description{font-size:15px}.home-actions .button{min-height:44px;padding:10px 20px}.home-scene{min-height:0;height:100%}.home-photo,.home-fallback{object-position:50% 58%}}
