@@ -1,403 +1,163 @@
-/* 青来集大会导览：内容从 data.json 读取；单文件版优先使用内联数据。 */
+/* 余村青来集介绍 H5 — 内容由 data.json 维护。 */
 (function () {
   'use strict';
-  var DATA, EVENT, MODULES = [];
-  var media = new Map();
-  var mediaIndex = 0;
-  var currentFilter = 'all';
-  var currentPeriod = 'all';
-  var galleryObserver = null;
-  var toastTimer = null;
-  var moduleDialog = document.getElementById('moduleDialog');
-  var galleryDialog = document.getElementById('galleryDialog');
-  var dialogContent = document.getElementById('dialogContent');
-  var galleryContent = document.getElementById('galleryContent');
-
-  var groups = {
-    opc: ['create', '创业与合作', 'assets/opc.jpg'],
-    party: ['create', '研学与实践', 'assets/party_route_classic_cover.jpg'],
-    partner: ['create', '创业与合作', 'assets/partner.jpg'],
-    aifriends: ['connect', '社群与活动', 'assets/aifriends.jpg'],
-    community: ['connect', '社群与活动', 'assets/community.jpg'],
-    apartment: ['live', '在村生活', 'assets/apartment1.jpg'],
-    recent: ['connect', '社群与活动', 'assets/event1.jpg'],
-    guide: ['live', '在村生活', 'assets/yucun_map.jpg']
-  };
-
+  var DATA, modules = [], currentRoute = '', timer, toastTimer, mediaCounter = 0;
+  var main = document.getElementById('main');
+  var homeHTML = main.innerHTML;
+  var actionBar = document.getElementById('actionBar');
+  var dialog = document.getElementById('overlayDialog');
+  var overlayContent = document.getElementById('overlayContent');
+  var controls = document.getElementById('galleryControls');
+  var mediaRegistry = new Map();
+  var galleryIndex = 0;
+  var activeGallery = null;
+  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
+  var aliases = {top:'home',agenda:'explore',venue:'about',community:'events',recent:'events',guide:'about',aifriends:'ai'};
   function el(id) { return document.getElementById(id); }
-  function esc(value) {
-    return String(value == null ? '' : value).replace(/[&<>"']/g, function (c) {
-      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
-    });
+  function esc(value) { return String(value == null ? '' : value).replace(/[&<>"']/g, function(c) { return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+  function asset(path) { return window.__QL_ASSETS__ && window.__QL_ASSETS__[path] || path; }
+  function image(path, alt, cls, eager) { return '<img src="'+esc(asset(path))+'" alt="'+esc(alt)+'" class="'+(cls||'')+'" loading="'+(eager?'eager':'lazy')+'" decoding="async">'; }
+  function moduleById(id) { return modules.find(function(m) { return m.id === id; }); }
+  function register(info) { var key = 'media-'+(++mediaCounter); mediaRegistry.set(key, info); return key; }
+  function mediaButton(info, title, cls) { return '<button type="button" class="'+(cls||'document-button')+'" data-gallery="'+register(info)+'"><span>'+esc(title||info.title)+'</span><span aria-hidden="true">↗</span></button>'; }
+  function phoneHref(value) { return 'tel:'+String(value).replace(/[^+\d]/g,''); }
+  function mapHref(value) { return 'https://uri.amap.com/search?keyword='+encodeURIComponent(value)+'&city='+encodeURIComponent('安吉')+'&view=map&src=qinglaiji'; }
+  function routeFromHash() { var raw = location.hash.slice(1) || 'home'; return aliases[raw] || raw; }
+  function showToast(text) { el('toast').textContent=text; el('toast').classList.add('show'); clearTimeout(toastTimer); toastTimer=setTimeout(function(){el('toast').classList.remove('show');},2300); }
+  function eventCard(item) {
+    var meta=item.date.replace(/-/g,'.')+(item.time?' · '+item.time:'');
+    return '<details class="event" data-category="'+esc(item.category)+'"><summary>'+image(item.poster,item.title,'event-thumb')+'<div><h3>'+esc(item.title)+'</h3><div class="event-meta">'+esc(meta)+'<br>'+esc(item.place)+'</div><span class="event-tag">往期 · '+esc(item.category)+'</span></div><span aria-hidden="true">↗</span></summary><div class="expanded"><p>'+esc(item.description)+'</p>'+mediaButton({title:item.title,images:[item.poster]},'查看活动海报','button secondary')+(item.phone?'<p><a class="text-link" href="'+phoneHref(item.phone)+'">活动咨询 '+esc(item.phone)+' ↗</a></p>':'')+'</div></details>';
   }
-  function tel(phone) { return 'tel:' + String(phone || '').replace(/[^\d+]/g, ''); }
-  function asset(path) { return (window.__QL_ASSETS__ && window.__QL_ASSETS__[path]) || path; }
-  function mapUrl(keyword) {
-    return 'https://uri.amap.com/search?keyword=' + encodeURIComponent(keyword) + '&city=' + encodeURIComponent('安吉') + '&view=map&src=qinglaiji-guide';
-  }
-  function setText(id, value) { el(id).textContent = value || ''; }
-  function section(title, content) { return '<section class="detail-section"><h3>' + esc(title) + '</h3>' + content + '</section>'; }
-  function mediaButton(title, source, label, slices) {
-    if (!source || (Array.isArray(source) && !source.length)) return '';
-    var key = 'media-' + (++mediaIndex);
-    media.set(key, {title:title, source:source, slices:!!slices});
-    return '<button type="button" class="button button-outline" data-media="' + key + '">' + esc(label || '查看图片') + ' ↗</button>';
-  }
-  function imageMarkup(src, alt, className, loadMode) {
-    return '<img class="' + (className || '') + '" src="' + esc(asset(src)) + '" alt="' + esc(alt || '') + '" loading="' + (loadMode || 'lazy') + '">';
-  }
-  function plainList(items) {
-    return '<ul class="detail-list">' + items.map(function (item) { return '<li>' + esc(item) + '</li>'; }).join('') + '</ul>';
-  }
-  function flowList(items) {
-    return '<ul class="detail-list">' + items.map(function (item) {
-      return '<li><strong>' + esc(item.step) + '. ' + esc(item.title) + '</strong><span>' + esc(item.desc) + '</span></li>';
-    }).join('') + '</ul>';
-  }
-  function policyList(items) {
-    return '<ul class="detail-list">' + items.map(function (item) {
-      return '<li><strong>' + esc(item.title) + '</strong><span>' + esc(item.desc) + '</span></li>';
-    }).join('') + '</ul>';
-  }
-  function pastEvents(items) {
-    return '<ul class="detail-list">' + items.map(function (item) {
-      return '<li><strong>' + esc(item.title) + '</strong><span>' + esc(item.date) + ' · ' + esc(item.time) + ' · ' + esc(item.location) + '</span><br><span class="event-past">往期活动</span>' +
-        (item.phone ? ' <a href="' + tel(item.phone) + '">电话：' + esc(item.phone) + '</a>' : '') + '</li>';
-    }).join('') + '</ul>';
-  }
-  function contactActions(contact, options) {
-    if (!contact) return '';
-    var out = [];
-    if (contact.phone) out.push('<a class="button button-dark" href="' + tel(contact.phone) + '">拨打 ' + esc(contact.phone) + ' ↗</a>');
-    if (contact.email) out.push('<a class="button button-outline" href="mailto:' + encodeURIComponent(contact.email) + '">发送邮件 ↗</a>');
-    if (contact.qrcode && contact.qrcode.indexOf('assets/') === 0) out.push(mediaButton(options || '联系二维码', contact.qrcode, '查看联系图片'));
-    return '<div class="detail-actions">' + out.join('') + '</div>' + (contact.note ? '<p class="detail-note">' + esc(contact.note) + '</p>' : '');
-  }
-
-  function renderConference() {
-    setText('heroLineTop', EVENT.headlineTop);
-    setText('heroLineBottom', EVENT.headlineBottom);
-    setText('heroTagline', EVENT.tagline);
-    setText('eventName', EVENT.name);
-    setText('eventDate', EVENT.dateLabel + '  ' + EVENT.timeLabel);
-    setText('eventPlace', EVENT.place);
-    setText('conferenceIntro', EVENT.intro);
-    setText('agendaDate', EVENT.dateLabel + '  /  ' + EVENT.timeLabel);
-    setText('venueName', EVENT.place);
-    setText('venueAddress', EVENT.address);
-    document.title = EVENT.name + ' · 大会导览';
-    if (!EVENT.demo) {
-      document.querySelectorAll('.demo-tag,.demo-note').forEach(function (node) { node.hidden = true; });
-      setText('footerStatus', '大会导览 · 信息以现场为准');
+  function renderBlock(b) {
+    var body = '';
+    if (b.type === 'text') body=b.paragraphs.map(function(p){return '<p class="body-copy">'+esc(p)+'</p>';}).join('');
+    if (b.type === 'features') body='<div class="feature-list">'+b.items.map(function(i){return '<article class="feature"><h3>'+esc(i.title)+'</h3><p>'+esc(i.text)+'</p></article>';}).join('')+'</div>';
+    if (b.type === 'steps') body='<ol class="step-list">'+b.items.map(function(i,n){return '<li class="step"><span class="step-index">'+(n+1)+'</span><div><h3>'+esc(i.title)+'</h3><p>'+esc(i.text)+'</p></div></li>';}).join('')+'</ol>';
+    if (b.type === 'tags') body='<div class="tag-list">'+b.items.map(function(i){return '<span class="tag">'+esc(i)+'</span>';}).join('')+'</div>';
+    if (b.type === 'gallery') {
+      var key=register(b.media);
+      body='<div class="photo-grid">'+b.media.images.map(function(src,n){return '<button type="button" class="photo-button" data-gallery="'+key+'" data-index="'+n+'" aria-label="查看'+esc(b.title)+'第'+(n+1)+'张照片">'+image(src,b.title+' · '+(n+1))+'<span>放大 ↗</span></button>';}).join('')+'</div>';
     }
-    el('mapLink').href = mapUrl(EVENT.mapKeyword);
-    el('venuePoints').innerHTML = EVENT.venues.map(function (v) {
-      return '<div class="venue-point"><b>' + esc(v.icon) + '</b><div><strong>' + esc(v.name) + '</strong><small>' + esc(v.meta) + ' · ' + esc(v.detail) + '</small></div></div>';
+    if (b.type === 'documents') body=b.items.map(function(i){return mediaButton(i);}).join('');
+    if (b.type === 'links') body='<div class="related-links">'+b.items.map(function(i){return '<a href="'+esc(i.href)+'">'+esc(i.title)+'<span aria-hidden="true">↗</span></a>';}).join('')+'</div>';
+    if (b.type === 'notice') body='<div class="notice"><ul>'+b.items.map(function(i){return '<li>'+esc(i)+'</li>';}).join('')+'</ul></div>';
+    if (b.type === 'spaces') body=b.items.map(function(i){return '<details class="space-item"><summary><div><strong>'+esc(i.title)+'</strong><small>'+esc(i.area)+' · '+esc(i.use)+'</small></div><span class="plus" aria-hidden="true">+</span></summary><div class="expanded"><p>'+esc(i.address)+'</p>'+mediaButton({title:i.title,images:[i.image]},'查看空间实景与完整介绍','button secondary')+'</div></details>';}).join('');
+    if (b.type === 'products') body=b.items.map(function(i){return '<details class="product"><summary><div><strong>'+esc(i.title)+'</strong><small>'+esc(i.duration)+'</small></div><span class="plus" aria-hidden="true">+</span></summary><div class="expanded"><p>'+esc(i.description)+'</p><p class="price">原折页参考价：'+esc(i.price)+'</p><ol class="route-list">'+i.route.map(function(r){return '<li>'+esc(r)+'</li>';}).join('')+'</ol><p>'+esc(i.included)+'</p>'+mediaButton(i.media,'查看完整行程与预订须知','button secondary')+'</div></details>';}).join('');
+    if (b.type === 'events') {
+      body=(b.filter?'<div class="filters" role="group" aria-label="筛选往期活动">'+['全部','公益','手作','自然'].map(function(t,n){return '<button type="button" class="filter" data-filter="'+t+'" aria-pressed="'+(n===0)+'">'+t+'</button>';}).join('')+'</div>':'')+'<div class="event-list">'+b.items.map(eventCard).join('')+'</div>';
+    }
+    return '<section class="content-block"><h2>'+esc(b.title)+'</h2>'+(b.note?'<p class="note">'+esc(b.note)+'</p>':'')+body+'</section>';
+  }
+  function renderDirectory() {
+    return '<section class="page directory"><div class="directory-heading"><p class="page-kicker">八个方向，一起探索</p><h1>从这里，<br>走进青来集。</h1><p>选择一个感兴趣的方向，慢慢了解。</p></div><nav class="entry-grid" aria-label="青来集八个模块">'+modules.map(function(m,n){return '<a class="entry" href="#'+m.id+'" data-color="'+m.color+'" style="--i:'+n+'"><span class="entry-number">'+String(n+1).padStart(2,'0')+'</span><strong>'+esc(m.title)+'</strong><span class="arrow" aria-hidden="true">↗</span></a>';}).join('')+'</nav><p class="source-note">余村青来集 · 青年与乡村，一起生长。</p></section>';
+  }
+  function renderModule(m) {
+    var n=modules.indexOf(m), next=modules[(n+1)%modules.length];
+    return '<article class="page detail" data-color="'+m.color+'"><a class="page-back" href="#explore">← 全部模块</a><header class="detail-header"><p class="page-kicker">'+String(n+1).padStart(2,'0')+' / '+esc(m.title)+'</p><h1 id="detailTitle">'+esc(m.headline)+'</h1><p class="page-lead">'+esc(m.description)+'</p></header>'+(['ai','events'].indexOf(m.id)<0?image(m.image,m.title+' · 原始资料配图','detail-photo',true):'')+m.blocks.map(renderBlock).join('')+'<a class="next-module" href="#'+next.id+'"><small>继续探索下一站</small><strong>'+esc(next.title)+'<span aria-hidden="true">↗</span></strong></a><p class="source-note">内容依据青来集提供的手册、海报与实景资料整理。</p></article>';
+  }
+  function enterAnimation() { main.classList.remove('is-entering');void main.offsetWidth;main.classList.add('is-entering'); }
+  function renderRoute(route, scroll, focus) {
+    if (!DATA) return;
+    var m=moduleById(route);
+    if (!m && route!=='home' && route!=='explore') route='home';
+    var changed=route!==currentRoute;
+    if (changed) {
+      currentRoute=route;document.body.dataset.view=route;
+      mediaRegistry.clear();mediaCounter=0;
+      main.innerHTML=route==='home'?homeHTML:route==='explore'?renderDirectory():renderModule(m);
+      document.title=(m?m.title+' · ':'')+'余村青来集';
+      actionBar.hidden=!m;
+      actionBar.innerHTML=m?'<a class="button secondary" href="#explore">全部模块</a><button type="button" class="button primary" data-contact="'+m.id+'">'+esc(m.action)+' <span aria-hidden="true">↗</span></button>':'';
+      enterAnimation();
+    }
+    if (scroll!==undefined) window.scrollTo({top:scroll,behavior:'instant'});
+    if (focus && changed) main.focus({preventScroll:true});
+  }
+  function navigate(route) {
+    if (!DATA) {showToast('内容加载中，请稍候');return;}
+    route=aliases[route]||route;
+    if (route===currentRoute){window.scrollTo({top:0,behavior:reduced.matches?'instant':'smooth'});return;}
+    clearTimeout(timer);
+    history.replaceState(Object.assign({},history.state,{scroll:window.scrollY}),'',location.href);
+    function commit(){history.pushState({route:route,scroll:0},'','#'+route);renderRoute(route,0,true);}
+    if (reduced.matches){commit();return;}
+    el('pageWipe').classList.remove('play');void el('pageWipe').offsetWidth;el('pageWipe').classList.add('play');
+    timer=setTimeout(commit,160);
+  }
+  function openOverlay(state) {
+    history.pushState(Object.assign({route:currentRoute,scroll:window.scrollY},state),'',location.href);
+    renderOverlay(state);
+  }
+  function closeOverlay() {
+    if (history.state && history.state.overlay) history.back();
+    else {dialog.close();document.body.classList.remove('modal-open');}
+  }
+  function renderContacts(id) {
+    var m=moduleById(id);if(!m)return;
+    el('overlayTitle').textContent=m.action;
+    controls.hidden=true;dialog.classList.remove('gallery-mode');
+    overlayContent.innerHTML=m.contacts.map(function(c){
+      var inner='';
+      if(c.type==='phone')inner='<a class="contact-value" href="'+phoneHref(c.value)+'">'+esc(c.value)+' ↗</a>';
+      if(c.type==='email')inner='<a class="contact-value" href="mailto:'+esc(c.value)+'">'+esc(c.value)+' ↗</a><br><button class="text-link" type="button" data-copy="'+esc(c.value)+'">复制邮箱</button>';
+      if(c.type==='map')inner='<p class="body-copy">'+esc(c.value)+'</p><a class="button primary" target="_blank" rel="noopener noreferrer" href="'+mapHref(c.value)+'">打开高德地图 ↗</a>';
+      if(c.type==='qr')inner='<button type="button" class="qr-preview" data-gallery="'+register({title:c.title,images:[c.image],note:c.note})+'" aria-label="放大'+esc(c.title)+'二维码">'+image(c.image,c.title+'二维码','',true)+'<span>点开放大 · 长按识别</span></button>';
+      return '<section class="contact-item"><h3>'+esc(c.title)+'</h3>'+inner+(c.note?'<p>'+esc(c.note)+'</p>':'')+'</section>';
     }).join('');
-    if (EVENT.heroImage) document.querySelector('.hero-photo').src = asset(EVENT.heroImage);
   }
-  function renderAgenda() {
-    var list = EVENT.agenda.filter(function (item) { return currentPeriod === 'all' || item.period === currentPeriod; });
-    el('agendaList').innerHTML = list.map(function (item, index) {
-      return '<details class="agenda-item" style="--entry-index:' + index + '"><summary><span class="agenda-time">' + esc(item.time) + '</span><span class="agenda-main"><strong>' + esc(item.title) + '</strong><small>' + esc(item.time) + ' — ' + esc(item.end) + ' · ' + esc(item.location) + '</small></span><span class="agenda-plus" aria-hidden="true">+</span></summary><div class="agenda-detail">' + esc(item.description) + '</div></details>';
-    }).join('');
+  function renderGallery() {
+    if(!activeGallery)return;
+    var info=activeGallery;
+    el('overlayTitle').textContent=info.title;
+    dialog.classList.add('gallery-mode');
+    var long=info.mode==='long';
+    overlayContent.innerHTML=(info.note?'<p class="gallery-note">'+esc(info.note)+'</p>':'')+(long?info.images.map(function(src,i){return image(src,info.title+' · 第'+(i+1)+'部分','gallery-image',i===0);}).join(''):image(info.images[galleryIndex],info.title+' · 第'+(galleryIndex+1)+'张','gallery-image',true));
+    controls.hidden=long || info.images.length<2;
+    controls.innerHTML=controls.hidden?'':'<button type="button" data-gallery-step="-1" '+(galleryIndex===0?'disabled':'')+'>← 上一张</button><span aria-live="polite">'+(galleryIndex+1)+' / '+info.images.length+'</span><button type="button" data-gallery-step="1" '+(galleryIndex===info.images.length-1?'disabled':'')+'>下一张 →</button>';
+    overlayContent.scrollTop=0;
   }
-  function renderModules() {
-    var selected = MODULES.filter(function (item) {
-      return currentFilter === 'all' || (groups[item.id] && groups[item.id][0] === currentFilter);
-    });
-    el('moduleGrid').innerHTML = selected.map(function (item, index) {
-      var group = groups[item.id] || ['connect', '青来集', 'assets/community.jpg'];
-      return '<button class="module-card" type="button" style="--entry-index:' + index + '" data-group="' + esc(group[0]) + '" data-open-module="' + esc(item.id) + '" aria-label="查看' + esc(item.title) + '详情">' +
-        '<span class="module-image">' + imageMarkup(group[2], item.title, '', 'eager') + '<span class="module-number">' + String(index + 1).padStart(2, '0') + '</span></span>' +
-        '<span class="module-info"><span class="module-category">' + esc(group[1]) + '</span><strong>' + esc(item.title) + '</strong><small>' + esc(item.summary) + '</small><span class="module-open" aria-hidden="true">↗</span></span></button>';
-    }).join('');
-  }
-  function renderModule(item) {
-    var html = '<p class="detail-lead">' + esc(item.summary) + '</p>';
-    switch (item.id) {
-      case 'opc':
-        html += imageMarkup(item.images[0], 'OPC入驻宣传资料', 'detail-cover');
-        html += section('入驻流程', flowList(item.flow));
-        html += section('可获得的支持', policyList(item.policy));
-        html += section('已入驻项目', plainList(item.cases));
-        html += section('联系入驻', '<p>可直接电话咨询，也可查看原始折页了解更多。</p>' + contactActions(item.contact) + '<div class="detail-actions">' + mediaButton('OPC入驻折页', item.images[0], '查看宣传折页') + '</div>');
-        break;
-      case 'party':
-        html += item.products.map(function (p) {
-          return section(p.name, imageMarkup(p.cover, p.name, 'detail-cover') +
-            '<p><strong>' + esc(p.duration) + '</strong></p>' +
-            (p.desc ? '<p>' + esc(p.desc) + '</p>' : '') +
-            (p.route ? plainList(p.route) : '') +
-            '<p><strong>资料价格：</strong>' + esc(p.price) + '</p>' +
-            '<div class="detail-actions">' + mediaButton(p.name + '完整折页', p.slices, '查看完整折页', true) + '</div>');
-        }).join('');
-        html += section('咨询研学产品', contactActions(item.contact, '研学负责人'));
-        html += '<p class="detail-note">产品价格与行程来自原始折页，实际安排请向负责人确认。</p>';
-        break;
-      case 'partner':
-        html += imageMarkup(item.images[0], '全球合伙人招募资料', 'detail-cover');
-        html += section('加入流程', flowList(item.flow));
-        html += section('招募方向与支持', policyList(item.policy));
-        html += section('联系合伙人计划', contactActions(item.contact) + '<div class="detail-actions">' + mediaButton('合伙人招募海报', item.images[0], '查看招募海报') + '</div>');
-        break;
-      case 'aifriends':
-        html += imageMarkup(item.images[0], 'AI朋友局往期活动', 'detail-cover');
-        html += section('往期活动', pastEvents(item.events));
-        html += section('加入社群', '<p>点击查看群二维码。群码可能过期，请以现场或官方最新信息为准。</p><div class="detail-actions">' + mediaButton('AI朋友局群二维码', item.group.qrcode, '查看群二维码') + '</div>');
-        break;
-      case 'community':
-        html += imageMarkup(item.images[0], '青聚落往期活动', 'detail-cover');
-        html += section('往期活动', pastEvents(item.events));
-        html += section('联系社区负责人', contactActions(item.contact));
-        break;
-      case 'apartment':
-        html += imageMarkup(item.images[0], '青来集人才公寓', 'detail-cover');
-        html += section('公寓位置', '<p>' + esc(item.address) + '</p><div class="detail-actions"><a class="button button-outline" href="' + mapUrl(item.address) + '" target="_blank" rel="noopener noreferrer">地图搜索 ↗</a></div>');
-        html += section('入住须知', plainList(item.rules));
-        html += section('服务电话', '<ul class="detail-list">' + item.contacts.map(function (c) {
-          return '<li><strong>' + esc(c.label) + (c.hours ? ' · ' + esc(c.hours) : '') + '</strong><a href="' + tel(c.phone) + '">' + esc(c.phone) + '</a></li>';
-        }).join('') + '</ul>');
-        html += section('公寓环境', '<div class="detail-gallery">' + item.images.map(function (src, i) {
-          var key = 'media-' + (++mediaIndex);
-          media.set(key, {title:'公寓环境 ' + (i + 1),source:src,slices:false});
-          return '<button type="button" data-media="' + key + '" aria-label="放大公寓照片' + (i + 1) + '">' + imageMarkup(src, '公寓环境照片' + (i + 1)) + '</button>';
-        }).join('') + '</div>');
-        break;
-      case 'recent':
-        html += section('往期村中活动', pastEvents(item.events));
-        html += '<p class="detail-note">此处展示资料包里的往期活动；大会新活动以正式日程为准。</p>';
-        break;
-      case 'guide':
-        html += imageMarkup(item.map, '余村漫游地图', 'detail-cover');
-        html += '<div class="detail-actions">' + mediaButton('余村漫游地图', item.map, '放大余村地图') + mediaButton('饭店推荐长图', item.restaurantSlices, '查看饭店推荐长图', true) + '</div>';
-        html += section('附近饭店', '<div class="rest-list">' + item.restaurants.map(function (r) {
-          return '<div class="rest-item"><strong>' + esc(r.name) + '</strong><small>' + esc(r.address) + '</small><a href="' + tel(r.phone) + '">' + esc(r.phone) + '</a></div>';
-        }).join('') + '</div>');
-        break;
+  function renderOverlay(state) {
+    if(!state || !state.overlay){if(dialog.open)dialog.close();document.body.classList.remove('modal-open');return;}
+    if(state.overlay==='contact')renderContacts(state.module);
+    else if(state.overlay==='gallery'){
+      activeGallery=mediaRegistry.get(state.key);
+      if(!activeGallery){dialog.close();document.body.classList.remove('modal-open');return;}
+      galleryIndex=state.index||0;renderGallery();
     }
-    return html;
+    if(!dialog.open)dialog.showModal();
+    document.body.classList.add('modal-open');overlayContent.scrollTop=0;
   }
-  function openModule(id) {
-    var item = MODULES.find(function (m) { return m.id === id; });
-    if (!item) return;
-    media.clear();
-    moduleDialog.dataset.group = (groups[id] || ['connect'])[0];
-    setText('dialogTitle', item.title);
-    dialogContent.innerHTML = renderModule(item);
-    dialogContent.scrollTop = 0;
-    if (!moduleDialog.open) moduleDialog.showModal();
-  }
-  function openMedia(key) {
-    var info = media.get(key);
-    if (!info) return;
-    setText('galleryTitle', info.title);
-    galleryContent.innerHTML = '';
-    if (galleryObserver) { galleryObserver.disconnect(); galleryObserver = null; }
-    if (info.slices) {
-      info.source.forEach(function (src) {
-        var holder = document.createElement('div');
-        holder.className = 'slice-holder';
-        holder.dataset.src = src;
-        galleryContent.appendChild(holder);
-      });
-      galleryObserver = new IntersectionObserver(function (entries) {
-        entries.forEach(function (entry) {
-          if (!entry.isIntersecting || entry.target.dataset.loaded) return;
-          var img = document.createElement('img');
-          img.alt = info.title;
-          img.src = entry.target.dataset.src;
-          entry.target.dataset.loaded = '1';
-          entry.target.appendChild(img);
-          galleryObserver.unobserve(entry.target);
-        });
-      }, {root:galleryContent,rootMargin:'500px'});
-      galleryContent.querySelectorAll('.slice-holder').forEach(function (holder) { galleryObserver.observe(holder); });
-    } else {
-      var img = document.createElement('img');
-      img.alt = info.title;
-      img.src = info.source;
-      galleryContent.appendChild(img);
-    }
-    galleryContent.scrollTop = 0;
-    galleryDialog.showModal();
-  }
-  function closeGallery() {
-    if (galleryObserver) { galleryObserver.disconnect(); galleryObserver = null; }
-    galleryDialog.close();
-    galleryContent.innerHTML = '';
-  }
-  function toast(message) {
-    var node = el('toast');
-    node.textContent = message;
-    node.classList.add('show');
-    clearTimeout(toastTimer);
-    toastTimer = setTimeout(function () { node.classList.remove('show'); }, 2500);
-  }
-  function copyAddress() {
-    var value = EVENT.address;
-    if (navigator.clipboard && window.isSecureContext) {
-      navigator.clipboard.writeText(value).then(function () { toast('地址已复制'); }).catch(copyFallback);
-    } else copyFallback();
-    function copyFallback() {
-      var input = document.createElement('textarea');
-      input.value = value;
-      input.style.position = 'fixed';
-      input.style.opacity = '0';
-      document.body.appendChild(input);
-      input.select();
-      var okay = document.execCommand('copy');
-      input.remove();
-      toast(okay ? '地址已复制' : '复制失败，请长按地址复制');
-    }
-  }
-  function selectGroup(selector, attribute, value) {
-    document.querySelectorAll(selector).forEach(function (button) {
-      var active = button.getAttribute(attribute) === value;
-      button.classList.toggle('is-active', active);
-      button.setAttribute('aria-pressed', active ? 'true' : 'false');
-    });
-  }
-  function setupNavigation() {
-    var mobile = window.matchMedia('(max-width:620px), (orientation:landscape) and (max-height:500px) and (max-width:900px)');
-    var views = ['home', 'agenda', 'venue', 'explore'];
-    var transition = el('pageTransition');
-    var transitionTimer;
-    var revealTimer;
-    var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-    function setMobileView(view, resetScroll) {
-      if (!mobile.matches) return;
-      if (views.indexOf(view) < 0) view = 'home';
-      document.body.dataset.mobileView = view;
-      document.body.classList.remove('view-animate');
-      void document.body.offsetWidth;
-      document.body.classList.add('view-animate');
-      document.querySelectorAll('[data-nav]').forEach(function (link) {
-        var active = link.dataset.nav === (view === 'home' ? 'top' : view);
-        link.classList.toggle('is-active', active);
-        if (active) link.setAttribute('aria-current', 'page');
-        else link.removeAttribute('aria-current');
-      });
-      if (resetScroll) requestAnimationFrame(function () { window.scrollTo(0, 0); });
-    }
-    function viewFromHash() {
-      var hash = location.hash.slice(1);
-      return views.indexOf(hash) >= 0 ? hash : 'home';
-    }
-    function syncView() {
-      clearTimeout(transitionTimer);
-      clearTimeout(revealTimer);
-      transition.className = 'page-transition';
-      setMobileView(viewFromHash(), true);
-    }
-    document.addEventListener('click', function (event) {
-      if (!mobile.matches) return;
-      var link = event.target.closest('a[href^="#"]');
-      if (!link) return;
-      var hash = link.getAttribute('href').slice(1);
-      if (['top', 'home', 'agenda', 'venue', 'explore'].indexOf(hash) < 0) return;
-      event.preventDefault();
-      var view = hash === 'top' ? 'home' : hash;
-      if (view === document.body.dataset.mobileView) {
-        window.scrollTo(0, 0);
-        return;
-      }
-      function commitView() {
-        history.pushState({view:view}, '', view === 'home' ? '#top' : '#' + view);
-        setMobileView(view, true);
-      }
-      if (reducedMotion.matches) { commitView(); return; }
-      clearTimeout(transitionTimer);
-      clearTimeout(revealTimer);
-      transition.style.setProperty('--touch-x', (event.clientX || innerWidth / 2) + 'px');
-      transition.style.setProperty('--touch-y', (event.clientY || innerHeight / 2) + 'px');
-      transition.style.setProperty('--transition-color', view === 'agenda' ? '#86cee3' : view === 'venue' ? '#a9cf9d' : view === 'explore' ? '#f0a469' : '#b9e1d5');
-      transition.className = 'page-transition';
-      void transition.offsetWidth;
-      transition.className = 'page-transition is-covering';
-      transitionTimer = setTimeout(function () {
-        commitView();
-        transition.className = 'page-transition is-revealing';
-        revealTimer = setTimeout(function () { transition.className = 'page-transition'; }, 260);
-      }, 190);
-    });
-    window.addEventListener('popstate', syncView);
-    window.addEventListener('hashchange', syncView);
-    if (mobile.addEventListener) mobile.addEventListener('change', syncView);
-    else mobile.addListener(syncView);
-    syncView();
-
-    var ids = ['top','agenda','venue','explore'];
-    var observer = new IntersectionObserver(function (entries) {
-      if (mobile.matches) return;
-      entries.forEach(function (entry) {
-        if (!entry.isIntersecting) return;
-        document.querySelectorAll('[data-nav]').forEach(function (link) {
-          var active = link.dataset.nav === entry.target.id;
-          link.classList.toggle('is-active', active);
-          if (active) link.setAttribute('aria-current', 'location');
-          else link.removeAttribute('aria-current');
-        });
-      });
-    }, {rootMargin:'-35% 0px -60% 0px'});
-    ids.forEach(function (id) { observer.observe(el(id)); });
-  }
-  document.addEventListener('pointerdown', function (event) {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    var target = event.target.closest('.quick-item,.hero-actions .button,.bottom-nav a,.mobile-page-header a,.segmented button,.filter-list button,.module-card,.venue-actions .button,.agenda-item summary,.icon-button');
-    if (!target) return;
-    var box = target.getBoundingClientRect();
-    var ripple = document.createElement('span');
-    ripple.className = 'tap-ripple';
-    ripple.style.left = event.clientX - box.left + 'px';
-    ripple.style.top = event.clientY - box.top + 'px';
-    target.appendChild(ripple);
-    setTimeout(function () { ripple.remove(); }, 540);
-  }, {passive:true});
-  document.addEventListener('click', function (event) {
-    var trigger = event.target.closest('[data-open-module]');
-    if (trigger) { openModule(trigger.dataset.openModule); return; }
-    trigger = event.target.closest('[data-media]');
-    if (trigger) { openMedia(trigger.dataset.media); return; }
-    trigger = event.target.closest('[data-filter]');
-    if (trigger) {
-      currentFilter = trigger.dataset.filter;
-      selectGroup('[data-filter]', 'data-filter', currentFilter);
-      renderModules();
-      return;
-    }
-    trigger = event.target.closest('[data-period]');
-    if (trigger) {
-      currentPeriod = trigger.dataset.period;
-      selectGroup('[data-period]', 'data-period', currentPeriod);
-      renderAgenda();
-    }
+  document.addEventListener('click',function(event){
+    var target=event.target.closest('[data-gallery]');
+    if(target){openOverlay({overlay:'gallery',key:target.dataset.gallery,index:Number(target.dataset.index)||0});return;}
+    target=event.target.closest('[data-contact]');
+    if(target){openOverlay({overlay:'contact',module:target.dataset.contact});return;}
+    target=event.target.closest('[data-gallery-step]');
+    if(target){galleryIndex=Math.max(0,Math.min(activeGallery.images.length-1,galleryIndex+Number(target.dataset.galleryStep)));renderGallery();return;}
+    target=event.target.closest('[data-copy]');
+    if(target){var value=target.dataset.copy;if(navigator.clipboard)navigator.clipboard.writeText(value).then(function(){showToast('已复制');}).catch(function(){showToast('请长按邮箱复制');});else showToast('请长按邮箱复制');return;}
+    target=event.target.closest('[data-filter]');
+    if(target){var block=target.closest('.content-block');block.querySelectorAll('[data-filter]').forEach(function(b){b.setAttribute('aria-pressed',String(b===target));});block.querySelectorAll('.event').forEach(function(row){row.hidden=target.dataset.filter!=='全部'&&row.dataset.category!==target.dataset.filter;});var list=block.querySelector('.event-list');list.classList.remove('filtered');void list.offsetWidth;list.classList.add('filtered');return;}
+    target=event.target.closest('a[href^="#"]');
+    if(target&&target.getAttribute('href')!=='#main'){event.preventDefault();navigate(target.getAttribute('href').slice(1));}
   });
-  el('closeModule').addEventListener('click', function () { moduleDialog.close(); });
-  el('closeGallery').addEventListener('click', closeGallery);
-  el('copyAddress').addEventListener('click', copyAddress);
-  moduleDialog.addEventListener('click', function (event) { if (event.target === moduleDialog) moduleDialog.close(); });
-  galleryDialog.addEventListener('click', function (event) { if (event.target === galleryDialog) closeGallery(); });
-  galleryDialog.addEventListener('close', function () {
-    if (galleryObserver) { galleryObserver.disconnect(); galleryObserver = null; }
-    galleryContent.innerHTML = '';
-  });
-
-  Promise.resolve(window.__QL_DATA__ || fetch('data.json?v=20260927-visual5').then(function (response) {
-    if (!response.ok) throw new Error('data.json ' + response.status);
-    return response.json();
-  })).then(function (data) {
-    DATA = data;
-    EVENT = data.conference;
-    MODULES = data.modules || [];
-    if (!EVENT || !EVENT.agenda) throw new Error('大会配置缺失');
-    renderConference();
-    renderAgenda();
-    renderModules();
-  }).catch(function (error) {
-    console.error('青来集数据加载失败', error);
-    el('agendaList').innerHTML = '<p>内容加载失败，请检查网络后刷新页面。</p><button class="button button-dark" type="button" onclick="location.reload()">重新加载</button>';
-    toast('内容加载失败');
-  });
-  setupNavigation();
+  document.addEventListener('pointerdown',function(event){
+    if(reduced.matches)return;
+    var target=event.target.closest('.button,.entry');if(!target)return;
+    var rect=target.getBoundingClientRect(),wave=document.createElement('span');wave.className='tap-wave';wave.setAttribute('aria-hidden','true');wave.style.left=(event.clientX-rect.left)+'px';wave.style.top=(event.clientY-rect.top)+'px';target.appendChild(wave);setTimeout(function(){wave.remove();},530);
+  },{passive:true});
+  el('closeOverlay').addEventListener('click',closeOverlay);
+  dialog.addEventListener('cancel',function(e){e.preventDefault();closeOverlay();});
+  dialog.addEventListener('click',function(e){if(e.target===dialog)closeOverlay();});
+  window.addEventListener('popstate',function(e){clearTimeout(timer);el('pageWipe').classList.remove('play');if(e.state&&e.state.overlay){renderOverlay(e.state);}else{renderOverlay(null);renderRoute(routeFromHash(),e.state&&e.state.scroll||0,true);}});
+  window.addEventListener('hashchange',function(){if(!(history.state&&history.state.overlay)&&routeFromHash()!==currentRoute)renderRoute(routeFromHash(),0,true);});
+  function load(){
+    Promise.resolve(window.__QL_DATA__ || fetch('data.json?v=20260928-intro6').then(function(r){if(!r.ok)throw Error('内容加载失败');return r.json();})).then(function(data){
+      DATA=data;modules=data.modules;
+      if(!Array.isArray(modules)||modules.length!==8)throw Error('模块数据不完整');
+      history.replaceState({route:routeFromHash(),scroll:0},'',location.href);
+      renderRoute(routeFromHash(),0,false);
+    }).catch(function(error){console.error(error);showToast('内容加载失败，请重试');var retry=document.createElement('button');retry.type='button';retry.className='button primary';retry.textContent='重新加载内容';retry.onclick=function(){retry.remove();load();};main.appendChild(retry);});
+  }
+  load();
 })();
