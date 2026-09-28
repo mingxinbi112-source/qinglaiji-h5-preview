@@ -13,3 +13,9 @@
 @media(max-height:700px) and (max-width:620px){.home{gap:15px}.home-copy .home-location{margin-bottom:8px}.home h1{font-size:43px;margin-bottom:10px}.home-scene{min-height:170px;height:29vh;height:29svh}.home-actions .button{min-height:48px}.home-sprout{top:32px}}
 @media(orientation:landscape) and (max-height:500px) and (min-width:621px){.topbar{height:64px}.home{min-height:calc(100vh - 64px);min-height:calc(100svh - 64px);padding-top:0;padding-bottom:16px;grid-template-rows:auto auto}.home-location{margin-bottom:8px;font-size:14px}.home h1{font-size:43px;margin-bottom:12px}.home-description{font-size:15px}.home-scene{height:calc(100vh - 88px);height:calc(100svh - 88px);min-height:240px}.home-actions{padding:15px 0 0}.home-actions .button{font-size:14px;min-height:45px;padding:10px 16px}.home-sprout{display:none}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{animation:none!important;transition:none!important}.page-wipe,.tap-wave{display:none}}
+/* The supplied architectural photograph needs a wider frame to retain the entrance. */
+.home-scene{height:auto;min-height:0;max-height:none;aspect-ratio:1.5;flex:0 0 auto;margin-block:auto;border-radius:32px 80px 32px 32px}
+.home-photo,.home-fallback{object-position:50% 50%}
+.home-scene::after{background:none}
+.home-scene .photo-caption,.home-scene .scene-line{display:none}
+@media(min-width:621px){.home-scene{aspect-ratio:1.3}}

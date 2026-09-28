@@ -152,7 +152,7 @@
   window.addEventListener('popstate',function(e){clearTimeout(timer);el('pageWipe').classList.remove('play');if(e.state&&e.state.overlay){renderOverlay(e.state);}else{renderOverlay(null);renderRoute(routeFromHash(),e.state&&e.state.scroll||0,true);}});
   window.addEventListener('hashchange',function(){if(!(history.state&&history.state.overlay)&&routeFromHash()!==currentRoute)renderRoute(routeFromHash(),0,true);});
   function load(){
-    Promise.resolve(window.__QL_DATA__ || fetch('data.json?v=20260928-intro6').then(function(r){if(!r.ok)throw Error('内容加载失败');return r.json();})).then(function(data){
+    Promise.resolve(window.__QL_DATA__ || fetch('data.json?v=20260928-intro7').then(function(r){if(!r.ok)throw Error('内容加载失败');return r.json();})).then(function(data){
       DATA=data;modules=data.modules;
       if(!Array.isArray(modules)||modules.length!==8)throw Error('模块数据不完整');
       history.replaceState({route:routeFromHash(),scroll:0},'',location.href);

@@ -1,10 +1,10 @@
 {
-  "version": "20260928-intro6",
+  "version": "20260928-intro7",
   "brand": {
     "name": "余村青来集",
     "title": "把理想，\n种在乡村。",
     "subtitle": "在这里，遇见另一种工作与生活。",
-    "hero": "assets/intro/village-friends.jpg",
+    "hero": "assets/intro/qinglaiji-space.jpg",
     "place": "浙江 · 安吉 · 余村"
   },
   "modules": [
