@@ -16,7 +16,7 @@
   function el(id) { return document.getElementById(id); }
   function esc(value) { return String(value == null ? '' : value).replace(/[&<>"']/g, function(c) { return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
   function asset(path) { return window.__QL_ASSETS__ && window.__QL_ASSETS__[path] || path; }
-  function image(path, alt, cls, eager) { return '<img src="'+esc(asset(path))+'" alt="'+esc(alt)+'" class="'+(cls||'')+'" loading="'+(eager?'eager':'lazy')+'" decoding="async">'; }
+  function image(path, alt, cls, eager, small) { return '<img src="'+esc(asset(small||path))+'"'+(small?' srcset="'+esc(asset(small))+' 640w, '+esc(asset(path))+' 1200w" sizes="(max-width: 880px) calc(100vw - 44px), 836px"':'')+' alt="'+esc(alt)+'" class="'+(cls||'')+'" loading="'+(eager?'eager':'lazy')+'" decoding="async">'; }
   function moduleById(id) { return modules.find(function(m) { return m.id === id; }); }
   function register(info) { var key = 'media-'+(++mediaCounter); mediaRegistry.set(key, info); return key; }
   function mediaButton(info, title, cls) { return '<button type="button" class="'+(cls||'document-button')+'" data-gallery="'+register(info)+'"><span>'+esc(title||info.title)+'</span><span aria-hidden="true">↗</span></button>'; }
@@ -52,9 +52,21 @@
     return '<section class="page directory"><div class="directory-heading"><p class="page-kicker">八个方向，一起探索</p><h1>从这里，<br>走进青来集。</h1><p>选择一个感兴趣的方向，慢慢了解。</p></div><nav class="entry-grid" aria-label="青来集八个模块">'+modules.map(function(m,n){return '<a class="entry" href="#'+m.id+'" data-color="'+m.color+'" style="--i:'+n+'"><span class="entry-number">'+String(n+1).padStart(2,'0')+'</span><strong>'+esc(m.title)+'</strong><span class="arrow" aria-hidden="true">↗</span></a>';}).join('')+'</nav><p class="source-note">余村青来集 · 青年与乡村，一起生长。</p></section>';
   }
   function renderModule(m) {
-    var n=modules.indexOf(m), next=modules[(n+1)%modules.length];
-    return '<article class="page detail" data-color="'+m.color+'"><a class="page-back" href="#explore">← 全部模块</a><header class="detail-header"><p class="page-kicker">'+String(n+1).padStart(2,'0')+' / '+esc(m.title)+'</p><h1 id="detailTitle">'+esc(m.headline)+'</h1><p class="page-lead">'+esc(m.description)+'</p></header>'+(['ai','events'].indexOf(m.id)<0?image(m.image,m.title+' · 原始资料配图','detail-photo',true):'')+m.blocks.map(renderBlock).join('')+'<a class="next-module" href="#'+next.id+'"><small>继续探索下一站</small><strong>'+esc(next.title)+'<span aria-hidden="true">↗</span></strong></a><p class="source-note">内容依据青来集提供的手册、海报与实景资料整理。</p></article>';
+    var n=modules.indexOf(m);
+    return '<article class="page detail" data-color="'+m.color+'"><a class="page-back" href="#explore">← 全部模块</a><header class="detail-header"><p class="page-kicker">'+String(n+1).padStart(2,'0')+' / '+esc(m.title)+'</p><h1 id="detailTitle">'+esc(m.headline)+'</h1><p class="page-lead">'+esc(m.description)+'</p></header>'+(m.photos?renderPhotoStrip(m):(['ai','events'].indexOf(m.id)<0?image(m.image,m.title+' · 原始资料配图','detail-photo',true,m.imageSmall):''))+m.blocks.map(renderBlock).join('')+'<p class="source-note">内容依据青来集提供的手册、海报与实景资料整理。</p></article>';
   }
+  function renderPhotoStrip(m) {
+    var key=register({title:'OPC 办公与生活实景',images:m.photos.map(function(p){return p.image;})});
+    return '<section class="photo-carousel" aria-label="OPC 办公与生活实景图集"><div class="photo-strip" tabindex="0" aria-label="左右滑动或使用方向键查看照片">'+m.photos.map(function(p,n){return '<figure class="photo-slide" role="group" aria-label="第'+(n+1)+'张，共'+m.photos.length+'张"><button type="button" data-gallery="'+key+'" data-index="'+n+'" aria-label="放大'+esc(p.caption)+'">'+image(p.image,p.caption,'',n===0)+'</button><figcaption>'+esc(p.caption)+'</figcaption></figure>';}).join('')+'</div><div class="photo-strip-footer"><span>左右滑动 · 点图放大</span><div class="photo-strip-controls"><button type="button" data-photo-step="-1" aria-label="上一张实景照片" disabled>←</button><span class="photo-counter" aria-live="polite">1 / '+m.photos.length+'</span><button type="button" data-photo-step="1" aria-label="下一张实景照片">→</button></div></div></section>';
+  }
+  function initPhotoStrip() {
+    var strip=main.querySelector('.photo-strip');if(!strip)return;
+    var box=strip.closest('.photo-carousel'),slides=Array.from(strip.children);
+    function update(){var index=0;slides.forEach(function(s,n){if(Math.abs(s.offsetLeft-strip.scrollLeft)<Math.abs(slides[index].offsetLeft-strip.scrollLeft))index=n;});strip.dataset.index=index;box.querySelector('.photo-counter').textContent=(index+1)+' / '+slides.length;box.querySelector('[data-photo-step="-1"]').disabled=index===0;box.querySelector('[data-photo-step="1"]').disabled=index===slides.length-1;slides.forEach(function(s,n){s.querySelector('button').tabIndex=n===index?0:-1;});}
+    strip.addEventListener('scroll',update,{passive:true});
+    strip.addEventListener('keydown',function(e){if(e.key==='ArrowLeft'||e.key==='ArrowRight'){e.preventDefault();movePhoto(strip,e.key==='ArrowLeft'?-1:1);}});update();
+  }
+  function movePhoto(strip,step){var index=Math.max(0,Math.min(strip.children.length-1,Number(strip.dataset.index||0)+step));strip.scrollTo({left:strip.children[index].offsetLeft,behavior:reduced.matches?'instant':'smooth'});}
   function enterAnimation() { main.classList.remove('is-entering');void main.offsetWidth;main.classList.add('is-entering'); }
   function renderRoute(route, scroll, focus) {
     if (!DATA) return;
@@ -65,6 +77,7 @@
       currentRoute=route;document.body.dataset.view=route;
       mediaRegistry.clear();mediaCounter=0;
       main.innerHTML=route==='home'?homeHTML:route==='explore'?renderDirectory():renderModule(m);
+      initPhotoStrip();
       document.title=(m?m.title+' · ':'')+'余村青来集';
       actionBar.hidden=!m;
       actionBar.innerHTML=m?'<a class="button secondary" href="#explore">全部模块</a><button type="button" class="button primary" data-contact="'+m.id+'">'+esc(m.action)+' <span aria-hidden="true">↗</span></button>':'';
@@ -115,6 +128,8 @@
     controls.hidden=long || info.images.length<2;
     controls.innerHTML=controls.hidden?'':'<button type="button" data-gallery-step="-1" '+(galleryIndex===0?'disabled':'')+'>← 上一张</button><span aria-live="polite">'+(galleryIndex+1)+' / '+info.images.length+'</span><button type="button" data-gallery-step="1" '+(galleryIndex===info.images.length-1?'disabled':'')+'>下一张 →</button>';
     overlayContent.scrollTop=0;
+    // Warm only neighboring pages, after the visible page has finished loading.
+    if(!long){var visible=overlayContent.querySelector('.gallery-image'),index=galleryIndex;function warm(){if(activeGallery!==info||galleryIndex!==index)return;[index-1,index+1].forEach(function(n){if(info.images[n]){var nextImage=new Image();nextImage.decoding='async';nextImage.fetchPriority='low';nextImage.src=asset(info.images[n]);}});}if(visible.complete&&visible.naturalWidth)warm();else visible.addEventListener('load',warm,{once:true});}
   }
   function renderOverlay(state) {
     if(!state || !state.overlay){if(dialog.open)dialog.close();document.body.classList.remove('modal-open');return;}
@@ -128,7 +143,9 @@
     document.body.classList.add('modal-open');overlayContent.scrollTop=0;
   }
   document.addEventListener('click',function(event){
-    var target=event.target.closest('[data-gallery]');
+    var target=event.target.closest('[data-photo-step]');
+    if(target){movePhoto(target.closest('.photo-carousel').querySelector('.photo-strip'),Number(target.dataset.photoStep));return;}
+    target=event.target.closest('[data-gallery]');
     if(target){openOverlay({overlay:'gallery',key:target.dataset.gallery,index:Number(target.dataset.index)||0});return;}
     target=event.target.closest('[data-contact]');
     if(target){openOverlay({overlay:'contact',module:target.dataset.contact});return;}
@@ -152,7 +169,7 @@
   window.addEventListener('popstate',function(e){clearTimeout(timer);el('pageWipe').classList.remove('play');if(e.state&&e.state.overlay){renderOverlay(e.state);}else{renderOverlay(null);renderRoute(routeFromHash(),e.state&&e.state.scroll||0,true);}});
   window.addEventListener('hashchange',function(){if(!(history.state&&history.state.overlay)&&routeFromHash()!==currentRoute)renderRoute(routeFromHash(),0,true);});
   function load(){
-    Promise.resolve(window.__QL_DATA__ || fetch('data.json?v=20260928-intro8').then(function(r){if(!r.ok)throw Error('内容加载失败');return r.json();})).then(function(data){
+    Promise.resolve(window.__QL_DATA__ || fetch('data.json?v=20260928-intro9').then(function(r){if(!r.ok)throw Error('内容加载失败');return r.json();})).then(function(data){
       DATA=data;modules=data.modules;
       if(!Array.isArray(modules)||modules.length!==8)throw Error('模块数据不完整');
       history.replaceState({route:routeFromHash(),scroll:0},'',location.href);

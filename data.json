@@ -1,5 +1,5 @@
 {
-  "version": "20260928-intro8",
+  "version": "20260928-intro9",
   "brand": {
     "name": "余村青来集",
     "title": "把理想，\n种在乡村。",
@@ -153,7 +153,7 @@
       "title": "乡村 OPC",
       "headline": "一个人的公司，\n一群人的未来。",
       "description": "以个人为核心，以 AI 与技能为内核，在真实乡村场景中完成商业实践。一个人也可以从这里出发，与在地产业和伙伴共同成长。",
-      "image": "assets/intro/opc-office.jpg",
+      "image": "assets/intro/opc-shared-office.webp",
       "color": "sky",
       "action": "查看入驻入口",
       "contacts": [
@@ -279,6 +279,24 @@
             }
           ]
         }
+      ],
+      "photos": [
+        {
+          "image": "assets/intro/opc-shared-office.webp",
+          "caption": "共享办公空间"
+        },
+        {
+          "image": "assets/intro/opc-private-office.webp",
+          "caption": "独立办公空间"
+        },
+        {
+          "image": "assets/intro/opc-nature-desk.webp",
+          "caption": "山野办公时光"
+        },
+        {
+          "image": "assets/intro/opc-coffee-space.webp",
+          "caption": "园区咖啡空间"
+        }
       ]
     },
     {
@@ -286,7 +304,7 @@
       "title": "全球合伙人",
       "headline": "余你一起，\n共建乡村未来。",
       "description": "邀请认同绿色发展与可持续理念的创业者、企业和机构，与余村共担风险、共建品牌、共创模式、共享未来。",
-      "image": "assets/intro/village-friends.jpg",
+      "image": "assets/intro/partner-hero-1200.webp",
       "color": "blue",
       "action": "对接合伙人计划",
       "contacts": [
@@ -386,70 +404,70 @@
               "area": "280㎡",
               "address": "余村叶家堂自然村48号",
               "use": "文化创意空间 / 工作室",
-              "image": "assets/intro/space-02.jpg"
+              "image": "assets/intro/space-02.webp"
             },
             {
               "title": "后巷·研学基地",
               "area": "280㎡",
               "address": "余村叶家堂自然村26号",
               "use": "研学空间 / 电竞中心 / 文创",
-              "image": "assets/intro/space-03.jpg"
+              "image": "assets/intro/space-03.webp"
             },
             {
               "title": "余村艺角",
               "area": "28㎡",
               "address": "余村核心区·春林山庄",
               "use": "文创店 / 美学空间",
-              "image": "assets/intro/space-04.jpg"
+              "image": "assets/intro/space-04.webp"
             },
             {
               "title": "徐家宅",
               "area": "300㎡",
               "address": "银坑村杨柳桥自然村48号",
               "use": "精品咖啡 / 民宿 / 文创",
-              "image": "assets/intro/space-05.jpg"
+              "image": "assets/intro/space-05.webp"
             },
             {
               "title": "浮玉山公园·咖啡屋",
               "area": "200㎡",
               "address": "山河村·浮玉山公园",
               "use": "露营咖啡",
-              "image": "assets/intro/space-06.jpg"
+              "image": "assets/intro/space-06.webp"
             },
             {
               "title": "天荒坪公路驿站",
               "area": "300㎡",
               "address": "井村墩上自然村",
               "use": "咖啡 / 餐饮",
-              "image": "assets/intro/space-07.jpg"
+              "image": "assets/intro/space-07.webp"
             },
             {
               "title": "五云里记忆巷主体大楼",
               "area": "1732㎡",
               "address": "五鹤村·大竹海景区附近",
               "use": "商业综合体 / 休闲旅游 / 民宿 / 培训",
-              "image": "assets/intro/space-08.jpg"
+              "image": "assets/intro/space-08.webp"
             },
             {
               "title": "老水泥厂区块",
               "area": "占地90亩",
               "address": "横路村取宝坞自然村",
               "use": "工业遗址公园 / 酒店 / 餐厅",
-              "image": "assets/intro/space-09.jpg"
+              "image": "assets/intro/space-09.webp"
             },
             {
               "title": "碳汇馆",
               "area": "占地4.5亩",
               "address": "港口村",
               "use": "酒店 / 民宿 / 人才公寓；需拆除重建",
-              "image": "assets/intro/space-10.jpg"
+              "image": "assets/intro/space-10.webp"
             },
             {
               "title": "青来集B区独栋",
               "area": "636㎡",
               "address": "青来集园区B区",
               "use": "总部经济 / 数创公司 / 类独角兽企业",
-              "image": "assets/intro/space-11.jpg"
+              "image": "assets/intro/space-11.webp"
             }
           ]
         },
@@ -478,38 +496,38 @@
             {
               "title": "余村全球合伙人手册",
               "images": [
-                "assets/intro/handbook-01.jpg",
-                "assets/intro/handbook-02.jpg",
-                "assets/intro/handbook-03.jpg",
-                "assets/intro/handbook-04.jpg",
-                "assets/intro/handbook-05.jpg",
-                "assets/intro/handbook-06.jpg",
-                "assets/intro/handbook-07.jpg",
-                "assets/intro/handbook-08.jpg",
-                "assets/intro/handbook-09.jpg",
-                "assets/intro/handbook-10.jpg",
-                "assets/intro/handbook-11.jpg",
-                "assets/intro/handbook-12.jpg",
-                "assets/intro/handbook-13.jpg",
-                "assets/intro/handbook-14.jpg",
-                "assets/intro/handbook-15.jpg",
-                "assets/intro/handbook-16.jpg",
-                "assets/intro/handbook-17.jpg",
-                "assets/intro/handbook-18.jpg",
-                "assets/intro/handbook-19.jpg",
-                "assets/intro/handbook-20.jpg",
-                "assets/intro/handbook-21.jpg",
-                "assets/intro/handbook-22.jpg",
-                "assets/intro/handbook-23.jpg",
-                "assets/intro/handbook-24.jpg",
-                "assets/intro/handbook-25.jpg",
-                "assets/intro/handbook-26.jpg",
-                "assets/intro/handbook-27.jpg",
-                "assets/intro/handbook-28.jpg",
-                "assets/intro/handbook-29.jpg",
-                "assets/intro/handbook-30.jpg",
-                "assets/intro/handbook-31.jpg",
-                "assets/intro/handbook-32.jpg"
+                "assets/intro/handbook-01.webp",
+                "assets/intro/handbook-02.webp",
+                "assets/intro/handbook-03.webp",
+                "assets/intro/handbook-04.webp",
+                "assets/intro/handbook-05.webp",
+                "assets/intro/handbook-06.webp",
+                "assets/intro/handbook-07.webp",
+                "assets/intro/handbook-08.webp",
+                "assets/intro/handbook-09.webp",
+                "assets/intro/handbook-10.webp",
+                "assets/intro/handbook-11.webp",
+                "assets/intro/handbook-12.webp",
+                "assets/intro/handbook-13.webp",
+                "assets/intro/handbook-14.webp",
+                "assets/intro/handbook-15.webp",
+                "assets/intro/handbook-16.webp",
+                "assets/intro/handbook-17.webp",
+                "assets/intro/handbook-18.webp",
+                "assets/intro/handbook-19.webp",
+                "assets/intro/handbook-20.webp",
+                "assets/intro/handbook-21.webp",
+                "assets/intro/handbook-22.webp",
+                "assets/intro/handbook-23.webp",
+                "assets/intro/handbook-24.webp",
+                "assets/intro/handbook-25.webp",
+                "assets/intro/handbook-26.webp",
+                "assets/intro/handbook-27.webp",
+                "assets/intro/handbook-28.webp",
+                "assets/intro/handbook-29.webp",
+                "assets/intro/handbook-30.webp",
+                "assets/intro/handbook-31.webp",
+                "assets/intro/handbook-32.webp"
               ],
               "mode": "pages",
               "note": ""
@@ -517,18 +535,18 @@
             {
               "title": "2026 招商空间完整册",
               "images": [
-                "assets/intro/space-01.jpg",
-                "assets/intro/space-02.jpg",
-                "assets/intro/space-03.jpg",
-                "assets/intro/space-04.jpg",
-                "assets/intro/space-05.jpg",
-                "assets/intro/space-06.jpg",
-                "assets/intro/space-07.jpg",
-                "assets/intro/space-08.jpg",
-                "assets/intro/space-09.jpg",
-                "assets/intro/space-10.jpg",
-                "assets/intro/space-11.jpg",
-                "assets/intro/space-12.jpg"
+                "assets/intro/space-01.webp",
+                "assets/intro/space-02.webp",
+                "assets/intro/space-03.webp",
+                "assets/intro/space-04.webp",
+                "assets/intro/space-05.webp",
+                "assets/intro/space-06.webp",
+                "assets/intro/space-07.webp",
+                "assets/intro/space-08.webp",
+                "assets/intro/space-09.webp",
+                "assets/intro/space-10.webp",
+                "assets/intro/space-11.webp",
+                "assets/intro/space-12.webp"
               ],
               "mode": "pages",
               "note": ""
@@ -543,7 +561,8 @@
             }
           ]
         }
-      ]
+      ],
+      "imageSmall": "assets/intro/partner-hero-640.webp"
     },
     {
       "id": "apartment",
